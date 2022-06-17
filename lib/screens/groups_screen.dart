@@ -4,49 +4,73 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
 import 'package:friends/widgets/modal_add_item.dart';
 
-class FriendsScreen extends StatefulWidget {
+class GroupsScreen extends StatefulWidget {
   final List friends;
+  final List groups;
 
   bool visible = true;
 
-  FriendsScreen({
+  GroupsScreen({
     Key? key,
     required this.friends,
+    required this.groups,
   }) : super(key: key);
 
   @override
-  State<FriendsScreen> createState() => _FriendsScreen();
+  State<GroupsScreen> createState() => _GroupsScreen();
 }
 
-class _FriendsScreen extends State<FriendsScreen> {
+class _GroupsScreen extends State<GroupsScreen> {
   final db = FirebaseFirestore.instance;
-  final collectionPath = 'friends';
+  final collectionPath = 'groups';
   final user = FirebaseAuth.instance.currentUser!;
   final textFieldController = TextEditingController();
 
-  void _addFriend(String text) {
+  void _addGroup(String text) {
     db.collection(collectionPath).add({
       "name": text,
+      "friends": [],
       "user_id": user.uid,
     });
     textFieldController.clear();
   }
 
-  void _editFriend(String id, String name) {
+  void _editGroup(String id, String name) {
     final doc = db.collection(collectionPath).doc(id);
     doc.update({"name": name}).then((value) => null);
   }
 
-  void _deleteFriend(String id) {
+  void _deleteGroup(String id) {
     final doc = db.collection(collectionPath).doc(id);
     doc.delete().then((doc) => null,
       onError: (e) => print("Error updating document $e"),
     );
   }
 
+  ModalAddItem addItemModal(name, doc) {
+    return ModalAddItem(
+      name: name,
+      onSubmit: (newName) => {
+        if (doc == '') {
+          _addGroup(newName)
+        } else {
+          _editGroup(doc.id, newName)
+        }
+      },
+      child: Column(
+        children: [
+          for (var i = 0; i < widget.groups.length; i++) Text(widget.groups[i]['name'])
+        ],
+      ),
+    );
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final groups = widget.groups;
+    final friends = widget.friends;
+
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -67,16 +91,16 @@ class _FriendsScreen extends State<FriendsScreen> {
             child: Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 16.0),
-                itemCount: widget.friends.length,
+                itemCount: groups.length,
                 itemBuilder: (context, index) {
-                  final doc = widget.friends[index];
+                  final doc = groups[index];
                   final name = doc['name'];
 
                   return Dismissible(
                     key: UniqueKey(),
                     direction: DismissDirection.endToStart,
                     onDismissed: (direction) {
-                      _deleteFriend(doc.id);
+                      _deleteGroup(doc.id);
                     },
                     child: ListTile(
                       title: Text(name),
@@ -88,10 +112,7 @@ class _FriendsScreen extends State<FriendsScreen> {
                           ),
                         ),
                         builder: (BuildContext context) {
-                          return ModalAddItem(
-                            name: name,
-                            onSubmit: (newName) => _editFriend(doc.id, newName),
-                          );
+                          return addItemModal(name, doc);
                         },
                       ),
                     ),
@@ -118,8 +139,16 @@ class _FriendsScreen extends State<FriendsScreen> {
               builder: (BuildContext context) {
                 return ModalAddItem(
                   name: '',
-                  onSubmit: (newName) => _addFriend(newName),
+                  onSubmit: (newName) => {
+                    _addGroup(newName)
+                  },
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < friends.length; i++) Text(friends[i]['name'])
+                    ],
+                  ),
                 );
+                //addItemModal('', '');
               },
             );
           },

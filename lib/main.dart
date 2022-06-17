@@ -8,6 +8,7 @@ import 'firebase_options.dart';
 import 'package:friends/util/google_sign_in.dart';
 import 'package:friends/widgets/sign_up_widget.dart';
 import 'package:friends/screens/friends_screen.dart';
+import 'package:friends/screens/groups_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,7 +46,7 @@ class HomePage extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasData) {
-          return const FriendsApp(title: 'Friends');
+          return FriendsApp(title: 'Friends');
         } else if (snapshot.hasError) {
           return const Center(child: Text('Something went wrong!!'));
         } else {
@@ -57,25 +58,29 @@ class HomePage extends StatelessWidget {
 }
 
 class FriendsApp extends StatefulWidget {
-  const FriendsApp({Key? key, required this.title}) : super(key: key);
-
   final String title;
+  int selectedIndex;
+
+  FriendsApp({
+    Key? key,
+    required this.title,
+    this.selectedIndex = 2,
+  }) : super(key: key);
 
   @override
   State<FriendsApp> createState() => _FriendsApp();
 }
 
 class _FriendsApp extends State<FriendsApp> {
-  int _selectedIndex = 1;
 
   void _onBarItemTapped(int index) {
-    setState(() { _selectedIndex = index; });
+    setState(() { widget.selectedIndex = index; });
   }
 
-  List<Widget> _widgetOptions(friends) => [
+  List<Widget> _widgetOptions(friends, groups) => [
     const Text('Check ins'),
     FriendsScreen(friends: friends),
-    const Text('Groups'),
+    GroupsScreen(groups: groups, friends: friends),
   ];
 
   final navigationItems = const <BottomNavigationBarItem>[
@@ -93,15 +98,23 @@ class _FriendsApp extends State<FriendsApp> {
     ),
   ];
 
+  final navItemTitles = const <String>[
+    'Check Ins',
+    'Friends',
+    'Groups',
+  ];
+
   @override
   Widget build(BuildContext context) {
     final ButtonStyle style = TextButton.styleFrom(primary: Theme.of(context).colorScheme.onPrimary);
     final user = FirebaseAuth.instance.currentUser!;
-    final Stream<QuerySnapshot> friends = FirebaseFirestore.instance.collection('friends').where("user_id", isEqualTo: user.uid).snapshots();
+    final db = FirebaseFirestore.instance;
+    final Stream<QuerySnapshot> friends = db.collection('friends').where("user_id", isEqualTo: user.uid).snapshots();
+    final Stream<QuerySnapshot> groups = db.collection('groups').where("user_id", isEqualTo: user.uid).snapshots();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(navItemTitles.elementAt(widget.selectedIndex)),
         actions: <Widget>[
           TextButton(
             style: style,
@@ -137,10 +150,32 @@ class _FriendsApp extends State<FriendsApp> {
           ),
         ],
       ),
-      body: _widgetOptions(friends).elementAt(_selectedIndex),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: friends,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot1) {
+
+          return StreamBuilder<QuerySnapshot>(
+            stream: groups,
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
+
+              if (snapshot1.hasError || snapshot2.hasError) {
+                return Text('Error: ${snapshot1.error}. ${snapshot2.error}');
+              } if (snapshot1.connectionState == ConnectionState.waiting ||
+                  snapshot2.connectionState == ConnectionState.waiting) {
+                return const Text('Data is loading');
+              }
+
+              final friendsDocs = snapshot1.requireData.docs;
+              final groupsDocs = snapshot2.requireData.docs;
+
+              return _widgetOptions(friendsDocs, groupsDocs).elementAt(widget.selectedIndex);
+            }
+          );
+        }
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: navigationItems,
-        currentIndex: _selectedIndex,
+        currentIndex: widget.selectedIndex,
         selectedItemColor: Colors.blue,
         onTap: _onBarItemTapped,
       ),

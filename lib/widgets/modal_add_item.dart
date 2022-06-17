@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
 
-class ModalAddItem extends StatelessWidget {
+class ModalAddItem extends StatefulWidget {
   final String name;
   final Function(String) onSubmit;
-  late final TextEditingController _textFieldController;
+  late final TextEditingController textFieldController;
+  final Widget? child;
 
   ModalAddItem({
     Key? key,
     required this.name,
     required this.onSubmit,
+    this.child,
   }) : super(key: key) {
-    _textFieldController = TextEditingController(text: name);
+    textFieldController = TextEditingController(text: name);
+  }
+
+  _ModalAddItem createState() => _ModalAddItem();
+}
+
+class _ModalAddItem extends State<ModalAddItem> {
+
+  void submit(context) {
+    widget.onSubmit(widget.textFieldController.text);
+    Navigator.pop(context);
   }
 
   @override
@@ -18,40 +30,39 @@ class ModalAddItem extends StatelessWidget {
     return SizedBox(
       height: 500,
       child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(25.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                const Text('Todo List Name'),
-                TextFormField(
-                  controller: _textFieldController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Todo item',
+        child: Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              const Text('Todo List Name'),
+              TextFormField(
+                controller: widget.textFieldController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Todo item',
+                ),
+                autofocus: true,
+                onEditingComplete: () => submit(context),
+              ),
+              widget.child ?? Container(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    child: const Text('Cancel'),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                  autofocus: true,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      child: const Text('Cancel'),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    const SizedBox(width: 5),
-                    ElevatedButton(
-                      child: const Text('Submit'),
-                      onPressed: () {
-                        onSubmit(_textFieldController.text);
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          )
+                  const SizedBox(width: 5),
+                  ElevatedButton(
+                    child: const Text('Submit'),
+                    onPressed: () => submit(context),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        )
       ),
     );
   }
