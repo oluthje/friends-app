@@ -1,0 +1,149 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'firebase_options.dart';
+
+import 'package:friends/util/google_sign_in.dart';
+import 'package:friends/widgets/sign_up_widget.dart';
+import 'package:friends/screens/friends_screen.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  MyApp({Key? key}) : super(key: key);
+
+  final Future<FirebaseApp> _fbApp = Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) => ChangeNotifierProvider(
+    create: (context) => GoogleSignInProvider(),
+    child: const MaterialApp(
+      title: 'Sign in App!',
+      home: HomePage()
+    )
+
+  );
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: StreamBuilder(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasData) {
+          return const FriendsApp(title: 'Friends');
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Something went wrong!!'));
+        } else {
+          return const SignUpWidget();
+        }
+      },
+    ),
+  );
+}
+
+class FriendsApp extends StatefulWidget {
+  const FriendsApp({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  State<FriendsApp> createState() => _FriendsApp();
+}
+
+class _FriendsApp extends State<FriendsApp> {
+  int _selectedIndex = 1;
+
+  void _onBarItemTapped(int index) {
+    setState(() { _selectedIndex = index; });
+  }
+
+  List<Widget> _widgetOptions(friends) => [
+    const Text('Check ins'),
+    FriendsScreen(friends: friends),
+    const Text('Groups'),
+  ];
+
+  final navigationItems = const <BottomNavigationBarItem>[
+    BottomNavigationBarItem(
+      icon: Icon(Icons.home),
+      label: 'Check Ins',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.home),
+      label: 'Friends',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.list),
+      label: 'Groups',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final ButtonStyle style = TextButton.styleFrom(primary: Theme.of(context).colorScheme.onPrimary);
+    final user = FirebaseAuth.instance.currentUser!;
+    final Stream<QuerySnapshot> friends = FirebaseFirestore.instance.collection('friends').where("user_id", isEqualTo: user.uid).snapshots();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+        actions: <Widget>[
+          TextButton(
+            style: style,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => SimpleDialog(
+                  alignment: Alignment.lerp(Alignment.topCenter, Alignment.center, 0.35),
+                  title: const Text('Account'),
+                  contentPadding: const EdgeInsets.all(20.0),
+                  children: [
+                    ElevatedButton(
+                        onPressed: () {
+                          final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
+                          provider.logout();
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Log out')
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Cancel')
+                    ),
+                  ],
+                ),
+              );
+            },
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(user.photoURL!),
+            ),
+          ),
+        ],
+      ),
+      body: _widgetOptions(friends).elementAt(_selectedIndex),
+      bottomNavigationBar: BottomNavigationBar(
+        items: navigationItems,
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        onTap: _onBarItemTapped,
+      ),
+    );
+  }
+}
