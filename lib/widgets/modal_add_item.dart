@@ -15,7 +15,8 @@ class ModalAddItem extends StatefulWidget {
     textFieldController = TextEditingController(text: name);
   }
 
-  _ModalAddItem createState() => _ModalAddItem();
+  @override
+  State<ModalAddItem> createState() => _ModalAddItem();
 }
 
 class _ModalAddItem extends State<ModalAddItem> {
@@ -49,12 +50,12 @@ class _ModalAddItem extends State<ModalAddItem> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
+                  TextButton(
                     child: const Text('Cancel'),
                     onPressed: () => Navigator.pop(context),
                   ),
                   const SizedBox(width: 5),
-                  ElevatedButton(
+                  TextButton(
                     child: const Text('Submit'),
                     onPressed: () => submit(context),
                   ),

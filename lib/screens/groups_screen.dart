@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
 import 'package:friends/widgets/modal_add_item.dart';
+import 'package:friends/widgets/item_selection.dart';
 
 class GroupsScreen extends StatefulWidget {
   final List friends;
   final List groups;
 
-  bool visible = true;
-
-  GroupsScreen({
+  const GroupsScreen({
     Key? key,
     required this.friends,
     required this.groups,
@@ -25,42 +24,61 @@ class _GroupsScreen extends State<GroupsScreen> {
   final collectionPath = 'groups';
   final user = FirebaseAuth.instance.currentUser!;
   final textFieldController = TextEditingController();
+  bool visible = true;
 
-  void _addGroup(String text) {
+  void _addGroup(String name, List friendIDs) {
     db.collection(collectionPath).add({
-      "name": text,
-      "friends": [],
+      "name": name,
+      "friend_ids": friendIDs,
       "user_id": user.uid,
     });
     textFieldController.clear();
   }
 
-  void _editGroup(String id, String name) {
+  void _editGroup(String id, String name, List selectedFriends) {
     final doc = db.collection(collectionPath).doc(id);
-    doc.update({"name": name}).then((value) => null);
+    doc.update({"name": name, "friend_ids": selectedFriends}).then((value) => null);
   }
 
   void _deleteGroup(String id) {
     final doc = db.collection(collectionPath).doc(id);
     doc.delete().then((doc) => null,
-      onError: (e) => print("Error updating document $e"),
-    );
+      onError: (e) => print("Error updating document $e"));
+
   }
 
-  ModalAddItem addItemModal(name, doc) {
+  ModalAddItem addItemModal(name, doc, selectedFriendIDs) {
+    List selectedIndices = [];
+
+    // get the indices of all selected friends
+    for (int i = 0; i < widget.friends.length; i++) {
+      if (selectedFriendIDs.contains(widget.friends[i].id)) {
+        selectedIndices.add(i);
+      }
+    }
+
     return ModalAddItem(
       name: name,
-      onSubmit: (newName) => {
+      onSubmit: (newName) {
+        // convert item indices into list of friend IDs
+        List friendIDs = [];
+        for (int i = 0; i < selectedIndices.length; i++) {
+          final selectedIndex = selectedIndices[i];
+          friendIDs.add(widget.friends[selectedIndex].id);
+        }
+
         if (doc == '') {
-          _addGroup(newName)
+          _addGroup(newName, friendIDs);
         } else {
-          _editGroup(doc.id, newName)
+          _editGroup(doc.id, newName, friendIDs);
         }
       },
-      child: Column(
-        children: [
-          for (var i = 0; i < widget.groups.length; i++) Text(widget.groups[i]['name'])
-        ],
+      child: ItemSelection(
+        items: widget.friends,
+        selectedItems: selectedIndices,
+        onUpdated: (items) {
+          selectedIndices = items;
+        },
       ),
     );
   }
@@ -69,7 +87,6 @@ class _GroupsScreen extends State<GroupsScreen> {
   @override
   Widget build(BuildContext context) {
     final groups = widget.groups;
-    final friends = widget.friends;
 
     return Scaffold(
       body: Column(
@@ -80,11 +97,10 @@ class _GroupsScreen extends State<GroupsScreen> {
               final ScrollDirection direction = notification.direction;
               setState(() {
                 if (direction == ScrollDirection.reverse) {
-                  widget.visible = false;
+                  visible = false;
                 } else if (direction == ScrollDirection.forward) {
-                  widget.visible = true;
+                  visible = true;
                 }
-
               });
               return true;
             },
@@ -95,6 +111,7 @@ class _GroupsScreen extends State<GroupsScreen> {
                 itemBuilder: (context, index) {
                   final doc = groups[index];
                   final name = doc['name'];
+                  final selectedFriendIDs = doc['friend_ids'];
 
                   return Dismissible(
                     key: UniqueKey(),
@@ -112,7 +129,7 @@ class _GroupsScreen extends State<GroupsScreen> {
                           ),
                         ),
                         builder: (BuildContext context) {
-                          return addItemModal(name, doc);
+                          return addItemModal(name, doc, selectedFriendIDs);
                         },
                       ),
                     ),
@@ -126,7 +143,7 @@ class _GroupsScreen extends State<GroupsScreen> {
       floatingActionButton: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.fastOutSlowIn,
-        transform: Matrix4.translationValues(0, widget.visible ? 0 : 100, 0),
+        transform: Matrix4.translationValues(0, visible ? 0 : 100, 0),
         child: FloatingActionButton(
           onPressed: () {
             showModalBottomSheet<void>(
@@ -137,18 +154,7 @@ class _GroupsScreen extends State<GroupsScreen> {
                 ),
               ),
               builder: (BuildContext context) {
-                return ModalAddItem(
-                  name: '',
-                  onSubmit: (newName) => {
-                    _addGroup(newName)
-                  },
-                  child: Column(
-                    children: [
-                      for (var i = 0; i < friends.length; i++) Text(friends[i]['name'])
-                    ],
-                  ),
-                );
-                //addItemModal('', '');
+                return addItemModal('', '', []);
               },
             );
           },
