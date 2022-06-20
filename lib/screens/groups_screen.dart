@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
+
 import 'package:friends/widgets/modal_add_item.dart';
 import 'package:friends/widgets/item_selection.dart';
+import 'package:friends/constants.dart' as constants;
 
 class GroupsScreen extends StatefulWidget {
   final List friends;
@@ -28,16 +30,16 @@ class _GroupsScreen extends State<GroupsScreen> {
 
   void _addGroup(String name, List friendIDs) {
     db.collection(collectionPath).add({
-      "name": name,
-      "friend_ids": friendIDs,
-      "user_id": user.uid,
+      constants.name: name,
+      constants.friendIds: friendIDs,
+      constants.userId: user.uid,
     });
     textFieldController.clear();
   }
 
   void _editGroup(String id, String name, List selectedFriends) {
     final doc = db.collection(collectionPath).doc(id);
-    doc.update({"name": name, "friend_ids": selectedFriends}).then((value) => null);
+    doc.update({constants.name: name, constants.friendIds: selectedFriends}).then((value) => null);
   }
 
   void _deleteGroup(String id) {
@@ -110,8 +112,8 @@ class _GroupsScreen extends State<GroupsScreen> {
                 itemCount: groups.length,
                 itemBuilder: (context, index) {
                   final doc = groups[index];
-                  final name = doc['name'];
-                  final selectedFriendIDs = doc['friend_ids'];
+                  final name = doc[constants.name];
+                  final selectedFriendIDs = doc[constants.friendIds];
 
                   return Dismissible(
                     key: UniqueKey(),

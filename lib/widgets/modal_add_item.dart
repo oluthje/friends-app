@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ModalAddItem extends StatefulWidget {
+class ModalAddItem extends StatelessWidget {
   final String name;
   final Function(String) onSubmit;
   late final TextEditingController textFieldController;
@@ -15,14 +15,8 @@ class ModalAddItem extends StatefulWidget {
     textFieldController = TextEditingController(text: name);
   }
 
-  @override
-  State<ModalAddItem> createState() => _ModalAddItem();
-}
-
-class _ModalAddItem extends State<ModalAddItem> {
-
   void submit(context) {
-    widget.onSubmit(widget.textFieldController.text);
+    onSubmit(textFieldController.text);
     Navigator.pop(context);
   }
 
@@ -38,7 +32,7 @@ class _ModalAddItem extends State<ModalAddItem> {
             children: <Widget>[
               const Text('Todo List Name'),
               TextFormField(
-                controller: widget.textFieldController,
+                controller: textFieldController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Todo item',
@@ -46,7 +40,7 @@ class _ModalAddItem extends State<ModalAddItem> {
                 autofocus: true,
                 onEditingComplete: () => submit(context),
               ),
-              widget.child ?? Container(),
+              child ?? Container(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

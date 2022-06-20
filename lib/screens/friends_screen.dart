@@ -2,14 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
-import 'package:friends/widgets/modal_add_item.dart';
+
+import 'package:friends/constants.dart' as constants;
+import 'package:friends/widgets/friend_modal.dart';
 
 class FriendsScreen extends StatefulWidget {
   final List friends;
 
-  bool visible = true;
-
-  FriendsScreen({
+  const FriendsScreen({
     Key? key,
     required this.friends,
   }) : super(key: key);
@@ -23,18 +23,23 @@ class _FriendsScreen extends State<FriendsScreen> {
   final collectionPath = 'friends';
   final user = FirebaseAuth.instance.currentUser!;
   final textFieldController = TextEditingController();
+  bool visible = true;
 
-  void _addFriend(String text) {
+  void _addFriend(String text, int intimacy) {
     db.collection(collectionPath).add({
-      "name": text,
-      "user_id": user.uid,
+      constants.name: text,
+      constants.userId: user.uid,
+      constants.friendIntimacy: intimacy,
     });
     textFieldController.clear();
   }
 
-  void _editFriend(String id, String name) {
+  void _editFriend(String id, String name, int intimacy) {
     final doc = db.collection(collectionPath).doc(id);
-    doc.update({"name": name}).then((value) => null);
+    doc.update({
+      constants.name: name,
+      constants.friendIntimacy: intimacy,
+    }).then((value) => null);
   }
 
   void _deleteFriend(String id) {
@@ -56,11 +61,10 @@ class _FriendsScreen extends State<FriendsScreen> {
               final ScrollDirection direction = notification.direction;
               setState(() {
                 if (direction == ScrollDirection.reverse) {
-                  widget.visible = false;
+                  visible = false;
                 } else if (direction == ScrollDirection.forward) {
-                  widget.visible = true;
+                  visible = true;
                 }
-
               });
               return true;
             },
@@ -69,8 +73,10 @@ class _FriendsScreen extends State<FriendsScreen> {
                 padding: const EdgeInsets.only(top: 16.0),
                 itemCount: widget.friends.length,
                 itemBuilder: (context, index) {
-                  final doc = widget.friends[index];
-                  final name = doc['name'];
+                  final DocumentSnapshot doc = widget.friends[index];
+                  final name = doc[constants.name];
+                  int intimacy = doc.data().toString().contains(constants.friendIntimacy)
+                      ? doc.get(constants.friendIntimacy) : constants.Intimacies.newFriend.index;
 
                   return Dismissible(
                     key: UniqueKey(),
@@ -88,9 +94,12 @@ class _FriendsScreen extends State<FriendsScreen> {
                           ),
                         ),
                         builder: (BuildContext context) {
-                          return ModalAddItem(
+                          return FriendModal(
                             name: name,
-                            onSubmit: (newName) => _editFriend(doc.id, newName),
+                            id: doc.id,
+                            intimacy: intimacy,
+                            editFriend: _editFriend,
+                            addFriend: _addFriend,
                           );
                         },
                       ),
@@ -105,7 +114,7 @@ class _FriendsScreen extends State<FriendsScreen> {
       floatingActionButton: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.fastOutSlowIn,
-        transform: Matrix4.translationValues(0, widget.visible ? 0 : 100, 0),
+        transform: Matrix4.translationValues(0, visible ? 0 : 100, 0),
         child: FloatingActionButton(
           onPressed: () {
             showModalBottomSheet<void>(
@@ -116,9 +125,12 @@ class _FriendsScreen extends State<FriendsScreen> {
                 ),
               ),
               builder: (BuildContext context) {
-                return ModalAddItem(
+                return FriendModal(
                   name: '',
-                  onSubmit: (newName) => _addFriend(newName),
+                  id: '',
+                  intimacy: constants.Intimacies.newFriend.index,
+                  editFriend: _editFriend,
+                  addFriend: _addFriend,
                 );
               },
             );

@@ -9,6 +9,7 @@ import 'package:friends/util/google_sign_in.dart';
 import 'package:friends/widgets/sign_up_widget.dart';
 import 'package:friends/screens/friends_screen.dart';
 import 'package:friends/screens/groups_screen.dart';
+import 'package:friends/constants.dart' as constants;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +47,7 @@ class HomePage extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasData) {
-          return FriendsApp(title: 'Friends');
+          return const FriendsApp(title: 'Friends');
         } else if (snapshot.hasError) {
           return const Center(child: Text('Something went wrong!!'));
         } else {
@@ -59,12 +60,10 @@ class HomePage extends StatelessWidget {
 
 class FriendsApp extends StatefulWidget {
   final String title;
-  int selectedIndex;
 
-  FriendsApp({
+  const FriendsApp({
     Key? key,
     required this.title,
-    this.selectedIndex = 2,
   }) : super(key: key);
 
   @override
@@ -72,9 +71,10 @@ class FriendsApp extends StatefulWidget {
 }
 
 class _FriendsApp extends State<FriendsApp> {
+  int selectedIndex = 1;
 
   void _onBarItemTapped(int index) {
-    setState(() { widget.selectedIndex = index; });
+    setState(() { selectedIndex = index; });
   }
 
   List<Widget> _widgetOptions(friends, groups) => [
@@ -109,12 +109,12 @@ class _FriendsApp extends State<FriendsApp> {
     final ButtonStyle style = TextButton.styleFrom(primary: Theme.of(context).colorScheme.onPrimary);
     final user = FirebaseAuth.instance.currentUser!;
     final db = FirebaseFirestore.instance;
-    final Stream<QuerySnapshot> friends = db.collection('friends').where("user_id", isEqualTo: user.uid).snapshots();
-    final Stream<QuerySnapshot> groups = db.collection('groups').where("user_id", isEqualTo: user.uid).snapshots();
+    final Stream<QuerySnapshot> friends = db.collection(constants.friends).where(constants.userId, isEqualTo: user.uid).snapshots();
+    final Stream<QuerySnapshot> groups = db.collection(constants.groups).where(constants.userId, isEqualTo: user.uid).snapshots();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(navItemTitles.elementAt(widget.selectedIndex)),
+        title: Text(navItemTitles.elementAt(selectedIndex)),
         actions: <Widget>[
           TextButton(
             style: style,
@@ -168,14 +168,14 @@ class _FriendsApp extends State<FriendsApp> {
               final friendsDocs = snapshot1.requireData.docs;
               final groupsDocs = snapshot2.requireData.docs;
 
-              return _widgetOptions(friendsDocs, groupsDocs).elementAt(widget.selectedIndex);
+              return _widgetOptions(friendsDocs, groupsDocs).elementAt(selectedIndex);
             }
           );
         }
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: navigationItems,
-        currentIndex: widget.selectedIndex,
+        currentIndex: selectedIndex,
         selectedItemColor: Colors.blue,
         onTap: _onBarItemTapped,
       ),
