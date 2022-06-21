@@ -11,6 +11,7 @@ import 'package:friends/screens/groups_screen.dart';
 import 'package:friends/constants.dart' as constants;
 import 'package:friends/widgets/profile_button.dart';
 import 'package:friends/widgets/cards/friends_card.dart';
+import 'package:friends/widgets/cards/groups_card.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -106,25 +107,11 @@ class _FriendsApp extends State<FriendsApp> {
               final groupsDocs = snapshot2.requireData.docs;
 
               return Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: <Widget>[
                     FriendsCard(friends: friendsDocs),
-                    Card(
-                      child: Column(
-                        children: [
-                          TextButton(
-                              onPressed: () {
-                                showBottomSheet(
-                                    context: context,
-                                    builder: (context) => GroupsScreen(initFriends: friendsDocs, initGroups: groupsDocs),
-                                );
-                              },
-                              child: const Text('Groups')
-                          ),
-                        ],
-                      ),
-                    ),
+                    GroupsCard(friends: friendsDocs, groups: groupsDocs),
                   ],
                 ),
               );
