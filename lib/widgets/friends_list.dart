@@ -25,58 +25,62 @@ class FriendsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GroupedListView<dynamic, String>(
-      elements: friends,
-      groupBy: (element) {
-        int intimacy = getIntimacy(element);
-        return constants.Intimacies.values[intimacy].index.toString();
-      },
-      groupSeparatorBuilder: (String groupValue) {
-        var groupName = constants.intimacyNames[groupValue] ?? 'Unknown';
-        return Padding(
-          padding: const EdgeInsets.only(left: 0.0),
-          child: Text(
-            groupName,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+    return Padding(padding: EdgeInsets.all(8.0),
+      child: GroupedListView<dynamic, String>(
+        elements: friends,
+        groupBy: (element) {
+          int intimacy = getIntimacy(element);
+          return constants.Intimacies.values[intimacy].index.toString();
+        },
+        groupSeparatorBuilder: (String groupValue) {
+          var groupName = constants.intimacyNames[groupValue] ?? 'Unknown';
+          return Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: Text(
+              groupName,
+              textAlign: TextAlign.left,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
             ),
-          ),
-        );
-      },
-      itemBuilder: (context, dynamic element) {
-        final DocumentSnapshot doc = element;
-        final name = doc[constants.name];
-        int intimacy = getIntimacy(element);
+          );
+        },
+        itemBuilder: (context, dynamic element) {
+          final DocumentSnapshot doc = element;
+          final name = doc[constants.name];
+          int intimacy = getIntimacy(element);
 
-        return Dismissible(
-          key: UniqueKey(),
-          direction: DismissDirection.endToStart,
-          onDismissed: (direction) {
-            deleteFriend(doc.id);
-          },
-          child: ListTile(
-            title: Text(name),
-            subtitle: Text('Hobbies, skills, interests and other things'),
-            onTap: () => showModalBottomSheet<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return FriendModal(
-                  name: name,
-                  id: doc.id,
-                  intimacy: intimacy,
-                  editFriend: editFriend,
-                  addFriend: addFriend,
-                );
-              },
+          return Dismissible(
+            key: UniqueKey(),
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) {
+              deleteFriend(doc.id);
+            },
+            child: Card(
+              child: ListTile(
+                visualDensity: const VisualDensity(vertical: VisualDensity.minimumDensity),
+                title: Text(name),
+                subtitle: const Text('Hobbies, skills, interests and other things'),
+                onTap: () => showModalBottomSheet<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return FriendModal(
+                      name: name,
+                      id: doc.id,
+                      intimacy: intimacy,
+                      editFriend: editFriend,
+                      addFriend: addFriend,
+                    );
+                  },
+                ),
+              ),
             ),
-          ),
-        );
-      },
-      itemComparator: (item1, item2) => item1[constants.name].compareTo(item2[constants.name]),
-      groupComparator: (group1, group2) => group1.compareTo(group2),
-      // useStickyGroupSeparators: true, // optional
+          );
+        },
+        itemComparator: (item1, item2) => item1[constants.name].compareTo(item2[constants.name]),
+        groupComparator: (group1, group2) => group1.compareTo(group2),
+      ),
     );
   }
 }
