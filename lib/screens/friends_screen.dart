@@ -8,11 +8,11 @@ import 'package:friends/widgets/friend_modal.dart';
 import 'package:friends/widgets/friends_list.dart';
 
 class FriendsScreen extends StatefulWidget {
-  final List friends;
+  final List initFriends;
 
   const FriendsScreen({
     Key? key,
-    required this.friends,
+    required this.initFriends,
   }) : super(key: key);
 
   @override
@@ -53,32 +53,47 @@ class _FriendsScreen extends State<FriendsScreen> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final Stream<QuerySnapshot> friends = db.collection(constants.friends).where(constants.userId, isEqualTo: user.uid).snapshots();
+
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          NotificationListener<UserScrollNotification>(
-            onNotification: (notification) {
-              final ScrollDirection direction = notification.direction;
-              setState(() {
-                if (direction == ScrollDirection.reverse) {
-                  visible = false;
-                } else if (direction == ScrollDirection.forward) {
-                  visible = true;
-                }
-              });
-              return true;
-            },
-            child: Expanded(
-              child: FriendsList(
-                addFriend: _addFriend,
-                deleteFriend: _deleteFriend,
-                editFriend: _editFriend,
-                friends: widget.friends,
+      body: StreamBuilder<QuerySnapshot>(
+        stream: friends,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          var friendsDocs = widget.initFriends;
+
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } if (snapshot.connectionState != ConnectionState.waiting) {
+            friendsDocs = snapshot.requireData.docs;
+          }
+
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              NotificationListener<UserScrollNotification>(
+                onNotification: (notification) {
+                  final ScrollDirection direction = notification.direction;
+                  setState(() {
+                    if (direction == ScrollDirection.reverse) {
+                      visible = false;
+                    } else if (direction == ScrollDirection.forward) {
+                      visible = true;
+                    }
+                  });
+                  return true;
+                },
+                child: Expanded(
+                  child: FriendsList(
+                    addFriend: _addFriend,
+                    deleteFriend: _deleteFriend,
+                    editFriend: _editFriend,
+                    friends: friendsDocs,
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        }
       ),
       floatingActionButton: AnimatedContainer(
         duration: const Duration(milliseconds: 250),

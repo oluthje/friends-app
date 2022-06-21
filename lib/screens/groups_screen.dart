@@ -8,13 +8,13 @@ import 'package:friends/widgets/item_selection.dart';
 import 'package:friends/constants.dart' as constants;
 
 class GroupsScreen extends StatefulWidget {
-  final List friends;
-  final List groups;
+  final List initFriends;
+  final List initGroups;
 
   const GroupsScreen({
     Key? key,
-    required this.friends,
-    required this.groups,
+    required this.initFriends,
+    required this.initGroups,
   }) : super(key: key);
 
   @override
@@ -53,8 +53,8 @@ class _GroupsScreen extends State<GroupsScreen> {
     List selectedIndices = [];
 
     // get the indices of all selected friends
-    for (int i = 0; i < widget.friends.length; i++) {
-      if (selectedFriendIDs.contains(widget.friends[i].id)) {
+    for (int i = 0; i < widget.initFriends.length; i++) {
+      if (selectedFriendIDs.contains(widget.initFriends[i].id)) {
         selectedIndices.add(i);
       }
     }
@@ -66,7 +66,7 @@ class _GroupsScreen extends State<GroupsScreen> {
         List friendIDs = [];
         for (int i = 0; i < selectedIndices.length; i++) {
           final selectedIndex = selectedIndices[i];
-          friendIDs.add(widget.friends[selectedIndex].id);
+          friendIDs.add(widget.initFriends[selectedIndex].id);
         }
 
         if (doc == '') {
@@ -76,7 +76,7 @@ class _GroupsScreen extends State<GroupsScreen> {
         }
       },
       child: ItemSelection(
-        items: widget.friends,
+        items: widget.initFriends,
         selectedItems: selectedIndices,
         onUpdated: (items) {
           selectedIndices = items;
@@ -88,59 +88,85 @@ class _GroupsScreen extends State<GroupsScreen> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final groups = widget.groups;
+    // final groups = widget.groups;
+    final db = FirebaseFirestore.instance;
+    final Stream<QuerySnapshot> friends = db.collection(constants.friends).where(constants.userId, isEqualTo: user.uid).snapshots();
+    final Stream<QuerySnapshot> groups = db.collection(constants.groups).where(constants.userId, isEqualTo: user.uid).snapshots();
 
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          NotificationListener<UserScrollNotification>(
-            onNotification: (notification) {
-              final ScrollDirection direction = notification.direction;
-              setState(() {
-                if (direction == ScrollDirection.reverse) {
-                  visible = false;
-                } else if (direction == ScrollDirection.forward) {
-                  visible = true;
-                }
-              });
-              return true;
-            },
-            child: Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(top: 16.0),
-                itemCount: groups.length,
-                itemBuilder: (context, index) {
-                  final doc = groups[index];
-                  final name = doc[constants.name];
-                  final selectedFriendIDs = doc[constants.friendIds];
+      body: StreamBuilder<QuerySnapshot>(
+        stream: friends,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot1) {
+          return StreamBuilder<QuerySnapshot>(
+            stream: groups,
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
 
-                  return Dismissible(
-                    key: UniqueKey(),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      _deleteGroup(doc.id);
+              var friendsDocs = widget.initFriends;
+              var groupsDocs = widget.initGroups;
+
+              if (snapshot1.hasError || snapshot2.hasError) {
+                return Text('Error: ${snapshot1.error}. ${snapshot2.error}');
+              }
+              if (snapshot1.connectionState != ConnectionState.waiting && snapshot2.connectionState != ConnectionState.waiting) {
+                // return const Text('Data is loading');
+                friendsDocs = snapshot1.requireData.docs;
+                groupsDocs = snapshot2.requireData.docs;
+              }
+
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  NotificationListener<UserScrollNotification>(
+                    onNotification: (notification) {
+                      final ScrollDirection direction = notification.direction;
+                      setState(() {
+                        if (direction == ScrollDirection.reverse) {
+                          visible = false;
+                        } else if (direction == ScrollDirection.forward) {
+                          visible = true;
+                        }
+                      });
+                      return true;
                     },
-                    child: ListTile(
-                      title: Text(name),
-                      onTap: () => showModalBottomSheet<void>(
-                        context: context,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(25.0),
-                          ),
-                        ),
-                        builder: (BuildContext context) {
-                          return addItemModal(name, doc, selectedFriendIDs);
+                    child: Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        itemCount: groupsDocs.length,
+                        itemBuilder: (context, index) {
+                          final doc = groupsDocs[index];
+                          final name = doc[constants.name];
+                          final selectedFriendIDs = doc[constants.friendIds];
+
+                          return Dismissible(
+                            key: UniqueKey(),
+                            direction: DismissDirection.endToStart,
+                            onDismissed: (direction) {
+                              _deleteGroup(doc.id);
+                            },
+                            child: ListTile(
+                              title: Text(name),
+                              onTap: () => showModalBottomSheet<void>(
+                                context: context,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(25.0),
+                                  ),
+                                ),
+                                builder: (BuildContext context) {
+                                  return addItemModal(name, doc, selectedFriendIDs);
+                                },
+                              ),
+                            ),
+                          );
                         },
                       ),
                     ),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
+                  ),
+                ],
+              );
+            },
+          );
+        }
       ),
       floatingActionButton: AnimatedContainer(
         duration: const Duration(milliseconds: 250),

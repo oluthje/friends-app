@@ -74,9 +74,7 @@ class FriendsList extends StatelessWidget {
         );
       },
       itemComparator: (item1, item2) => item1[constants.name].compareTo(item2[constants.name]),
-      groupComparator: (group1, group2) {
-        return group1.compareTo(group2);
-      },
+      groupComparator: (group1, group2) => group1.compareTo(group2),
       useStickyGroupSeparators: true, // optional
     );
   }

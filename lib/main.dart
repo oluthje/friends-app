@@ -10,6 +10,7 @@ import 'package:friends/widgets/sign_up_widget.dart';
 import 'package:friends/screens/friends_screen.dart';
 import 'package:friends/screens/groups_screen.dart';
 import 'package:friends/constants.dart' as constants;
+import 'package:friends/widgets/profile_button.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,42 +72,9 @@ class FriendsApp extends StatefulWidget {
 }
 
 class _FriendsApp extends State<FriendsApp> {
-  int selectedIndex = 1;
-
-  void _onBarItemTapped(int index) {
-    setState(() { selectedIndex = index; });
-  }
-
-  List<Widget> _widgetOptions(friends, groups) => [
-    const Text('Check ins'),
-    FriendsScreen(friends: friends),
-    GroupsScreen(groups: groups, friends: friends),
-  ];
-
-  final navigationItems = const <BottomNavigationBarItem>[
-    BottomNavigationBarItem(
-      icon: Icon(Icons.home),
-      label: 'Check Ins',
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.home),
-      label: 'Friends',
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.list),
-      label: 'Groups',
-    ),
-  ];
-
-  final navItemTitles = const <String>[
-    'Check Ins',
-    'Friends',
-    'Groups',
-  ];
 
   @override
   Widget build(BuildContext context) {
-    final ButtonStyle style = TextButton.styleFrom(primary: Theme.of(context).colorScheme.onPrimary);
     final user = FirebaseAuth.instance.currentUser!;
     final db = FirebaseFirestore.instance;
     final Stream<QuerySnapshot> friends = db.collection(constants.friends).where(constants.userId, isEqualTo: user.uid).snapshots();
@@ -114,40 +82,9 @@ class _FriendsApp extends State<FriendsApp> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(navItemTitles.elementAt(selectedIndex)),
+        title: const Text('Dashboard'),
         actions: <Widget>[
-          TextButton(
-            style: style,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => SimpleDialog(
-                  alignment: Alignment.lerp(Alignment.topCenter, Alignment.center, 0.35),
-                  title: const Text('Account'),
-                  contentPadding: const EdgeInsets.all(20.0),
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
-                          provider.logout();
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('Log out')
-                    ),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('Cancel')
-                    ),
-                  ],
-                ),
-              );
-            },
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(user.photoURL!),
-            ),
-          ),
+          ProfileButton(user: user),
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -168,16 +105,43 @@ class _FriendsApp extends State<FriendsApp> {
               final friendsDocs = snapshot1.requireData.docs;
               final groupsDocs = snapshot2.requireData.docs;
 
-              return _widgetOptions(friendsDocs, groupsDocs).elementAt(selectedIndex);
+              return Column(
+                children: <Widget>[
+                  Card(
+                    child: Column(
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              showBottomSheet(
+                                context: context,
+                                builder: (context) => FriendsScreen(initFriends: friendsDocs)
+                              );
+                            },
+                            child: const Text('Friends')
+                        ),
+                      ],
+                    ),
+                  ),
+                  Card(
+                    child: Column(
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              showBottomSheet(
+                                  context: context,
+                                  builder: (context) => GroupsScreen(initFriends: friendsDocs, initGroups: groupsDocs),
+                              );
+                            },
+                            child: const Text('Groups')
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
             }
           );
         }
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: navigationItems,
-        currentIndex: selectedIndex,
-        selectedItemColor: Colors.blue,
-        onTap: _onBarItemTapped,
       ),
     );
   }
