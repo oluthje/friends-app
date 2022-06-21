@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 
 import 'package:friends/constants.dart' as constants;
 import 'package:friends/widgets/friend_modal.dart';
+import 'package:friends/widgets/friends_list.dart';
 
 class FriendsScreen extends StatefulWidget {
   final List friends;
@@ -54,7 +55,7 @@ class _FriendsScreen extends State<FriendsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           NotificationListener<UserScrollNotification>(
             onNotification: (notification) {
@@ -69,43 +70,11 @@ class _FriendsScreen extends State<FriendsScreen> {
               return true;
             },
             child: Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(top: 16.0),
-                itemCount: widget.friends.length,
-                itemBuilder: (context, index) {
-                  final DocumentSnapshot doc = widget.friends[index];
-                  final name = doc[constants.name];
-                  int intimacy = doc.data().toString().contains(constants.friendIntimacy)
-                      ? doc.get(constants.friendIntimacy) : constants.Intimacies.newFriend.index;
-
-                  return Dismissible(
-                    key: UniqueKey(),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      _deleteFriend(doc.id);
-                    },
-                    child: ListTile(
-                      title: Text(name),
-                      onTap: () => showModalBottomSheet<void>(
-                        context: context,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(25.0),
-                          ),
-                        ),
-                        builder: (BuildContext context) {
-                          return FriendModal(
-                            name: name,
-                            id: doc.id,
-                            intimacy: intimacy,
-                            editFriend: _editFriend,
-                            addFriend: _addFriend,
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                },
+              child: FriendsList(
+                addFriend: _addFriend,
+                deleteFriend: _deleteFriend,
+                editFriend: _editFriend,
+                friends: widget.friends,
               ),
             ),
           ),

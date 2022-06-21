@@ -36,6 +36,8 @@ class _IntimacySelection extends State<IntimacySelection> {
 
     return ToggleButtons(
       isSelected: isSelected,
+      renderBorder: false,
+      borderRadius: BorderRadius.circular(30.0),
       children: const [
         Text('Good'),
         Text('Rising'),

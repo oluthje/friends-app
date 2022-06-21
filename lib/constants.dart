@@ -15,3 +15,9 @@ const numIntimacies = 4;
 enum Intimacies {
   good, rising, newFriend, acquaintance
 }
+const Map<String, String> intimacyNames = {
+  '0': 'Good',
+  '1': 'Rising',
+  '2': 'New',
+  '3': 'Acquainted',
+};

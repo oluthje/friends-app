@@ -43,12 +43,15 @@ class _FriendModal extends State<FriendModal> {
           widget.editFriend(widget.id, newName, intimacy);
         }
       },
-      child: IntimacySelection(
-        intimacy: intimacy,
-        onChange: (newIntimacy) {
-          intimacy = newIntimacy;
-        },
-      )
+      child: Padding(
+        padding: const EdgeInsets.only(top: 14.0),
+        child: IntimacySelection(
+          intimacy: intimacy,
+          onChange: (newIntimacy) {
+            intimacy = newIntimacy;
+          },
+        )
+      ),
     );
   }
 }
