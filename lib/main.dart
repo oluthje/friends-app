@@ -7,10 +7,10 @@ import 'firebase_options.dart';
 
 import 'package:friends/util/google_sign_in.dart';
 import 'package:friends/widgets/sign_up_widget.dart';
-import 'package:friends/screens/friends_screen.dart';
 import 'package:friends/screens/groups_screen.dart';
 import 'package:friends/constants.dart' as constants;
 import 'package:friends/widgets/profile_button.dart';
+import 'package:friends/widgets/cards/friends_card.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -82,7 +82,7 @@ class _FriendsApp extends State<FriendsApp> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: const Text('Friends'),
         actions: <Widget>[
           ProfileButton(user: user),
         ],
@@ -105,39 +105,28 @@ class _FriendsApp extends State<FriendsApp> {
               final friendsDocs = snapshot1.requireData.docs;
               final groupsDocs = snapshot2.requireData.docs;
 
-              return Column(
-                children: <Widget>[
-                  Card(
-                    child: Column(
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              showBottomSheet(
-                                context: context,
-                                builder: (context) => FriendsScreen(initFriends: friendsDocs)
-                              );
-                            },
-                            child: const Text('Friends')
-                        ),
-                      ],
+              return Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Column(
+                  children: <Widget>[
+                    FriendsCard(friends: friendsDocs),
+                    Card(
+                      child: Column(
+                        children: [
+                          TextButton(
+                              onPressed: () {
+                                showBottomSheet(
+                                    context: context,
+                                    builder: (context) => GroupsScreen(initFriends: friendsDocs, initGroups: groupsDocs),
+                                );
+                              },
+                              child: const Text('Groups')
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Card(
-                    child: Column(
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              showBottomSheet(
-                                  context: context,
-                                  builder: (context) => GroupsScreen(initFriends: friendsDocs, initGroups: groupsDocs),
-                              );
-                            },
-                            child: const Text('Groups')
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               );
             }
           );

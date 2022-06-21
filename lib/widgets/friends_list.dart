@@ -34,10 +34,10 @@ class FriendsList extends StatelessWidget {
       groupSeparatorBuilder: (String groupValue) {
         var groupName = constants.intimacyNames[groupValue] ?? 'Unknown';
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 0.0),
           child: Text(
             groupName,
-            textAlign: TextAlign.left,
+            textAlign: TextAlign.center,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -58,6 +58,7 @@ class FriendsList extends StatelessWidget {
           },
           child: ListTile(
             title: Text(name),
+            subtitle: Text('Hobbies, skills, interests and other things'),
             onTap: () => showModalBottomSheet<void>(
               context: context,
               builder: (BuildContext context) {
@@ -75,7 +76,7 @@ class FriendsList extends StatelessWidget {
       },
       itemComparator: (item1, item2) => item1[constants.name].compareTo(item2[constants.name]),
       groupComparator: (group1, group2) => group1.compareTo(group2),
-      useStickyGroupSeparators: true, // optional
+      // useStickyGroupSeparators: true, // optional
     );
   }
 }
