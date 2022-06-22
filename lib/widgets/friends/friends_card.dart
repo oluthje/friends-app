@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:friends/widgets/friends/friends_list_tile.dart';
 import '../../screens/friends_screen.dart';
 import '../cards/dashboard_card.dart';
 import 'package:friends/constants.dart' as constants;
@@ -41,11 +42,9 @@ class FriendsCard extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: min(5, friends.length),
             itemBuilder: (context, int index) {
-              return ListTile(
-                visualDensity:
-                    const VisualDensity(vertical: VisualDensity.minimumDensity),
-                title: Text(sortedFriends[index]['name']),
-                subtitle: const Text('Arts, Climbing, video games'),
+              return FriendsListTile(
+                name: sortedFriends[index][constants.name],
+                onTap: () {},
               );
             },
           ),

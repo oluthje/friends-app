@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:friends/widgets/friends/friends_list_tile.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:friends/constants.dart' as constants;
 import 'package:friends/widgets/friends/friend_modal.dart';
@@ -60,12 +61,8 @@ class FriendsList extends StatelessWidget {
               deleteFriend(doc.id);
             },
             child: Card(
-              child: ListTile(
-                visualDensity:
-                    const VisualDensity(vertical: VisualDensity.minimumDensity),
-                title: Text(name),
-                subtitle:
-                    const Text('Hobbies, skills, interests and other things'),
+              child: FriendsListTile(
+                name: name,
                 onTap: () => showModalBottomSheet<void>(
                   context: context,
                   builder: (BuildContext context) {
