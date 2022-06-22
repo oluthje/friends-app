@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import '../../screens/friends_screen.dart';
-import 'dashboard_card.dart';
+import '../cards/dashboard_card.dart';
 import 'package:friends/constants.dart' as constants;
 
 class FriendsCard extends StatelessWidget {

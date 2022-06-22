@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
+import 'package:friends/widgets/groups/group_list_tile.dart';
 
 import 'package:friends/widgets/modal_add_item.dart';
 import 'package:friends/widgets/item_selection.dart';
@@ -164,17 +165,11 @@ class _GroupsScreen extends State<GroupsScreen> {
                             onDismissed: (direction) {
                               _deleteGroup(doc.id);
                             },
-                            child: ListTile(
-                              title: Text(name),
-                              trailing: TextButton(
-                                onPressed: () {
-                                  _editGroup(doc.id, name, selectedFriendIDs,
-                                      !favorited);
-                                },
-                                child: Icon(favorited
-                                    ? Icons.favorite
-                                    : Icons.favorite_outline),
-                              ),
+                            child: GroupListTile(
+                              name: name,
+                              favorited: favorited,
+                              onFavoritedToggle: () => _editGroup(
+                                  doc.id, name, selectedFriendIDs, !favorited),
                               onTap: () => showModalBottomSheet<void>(
                                 context: context,
                                 shape: const RoundedRectangleBorder(

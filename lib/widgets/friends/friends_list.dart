@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:friends/constants.dart' as constants;
-import 'package:friends/widgets/friend_modal.dart';
+import 'package:friends/widgets/friends/friend_modal.dart';
 
 class FriendsList extends StatelessWidget {
   final List friends;
@@ -20,12 +20,14 @@ class FriendsList extends StatelessWidget {
 
   int getIntimacy(element) {
     return element.data().toString().contains(constants.friendIntimacy)
-      ? element.get(constants.friendIntimacy) : constants.Intimacies.newFriend.index;
+        ? element.get(constants.friendIntimacy)
+        : constants.Intimacies.newFriend.index;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.all(8.0),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: GroupedListView<dynamic, String>(
         elements: friends,
         groupBy: (element) {
@@ -59,9 +61,11 @@ class FriendsList extends StatelessWidget {
             },
             child: Card(
               child: ListTile(
-                visualDensity: const VisualDensity(vertical: VisualDensity.minimumDensity),
+                visualDensity:
+                    const VisualDensity(vertical: VisualDensity.minimumDensity),
                 title: Text(name),
-                subtitle: const Text('Hobbies, skills, interests and other things'),
+                subtitle:
+                    const Text('Hobbies, skills, interests and other things'),
                 onTap: () => showModalBottomSheet<void>(
                   context: context,
                   builder: (BuildContext context) {
@@ -78,7 +82,8 @@ class FriendsList extends StatelessWidget {
             ),
           );
         },
-        itemComparator: (item1, item2) => item1[constants.name].compareTo(item2[constants.name]),
+        itemComparator: (item1, item2) =>
+            item1[constants.name].compareTo(item2[constants.name]),
         groupComparator: (group1, group2) => group1.compareTo(group2),
       ),
     );

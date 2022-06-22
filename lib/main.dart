@@ -10,8 +10,8 @@ import 'package:friends/widgets/sign_up_widget.dart';
 import 'package:friends/screens/groups_screen.dart';
 import 'package:friends/constants.dart' as constants;
 import 'package:friends/widgets/profile_button.dart';
-import 'package:friends/widgets/cards/friends_card.dart';
-import 'package:friends/widgets/cards/groups_card.dart';
+import 'package:friends/widgets/friends/friends_card.dart';
+import 'package:friends/widgets/groups/groups_card.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

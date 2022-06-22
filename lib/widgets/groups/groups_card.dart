@@ -1,8 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:friends/screens/groups_screen.dart';
-import 'dashboard_card.dart';
+import '../cards/dashboard_card.dart';
 import 'package:friends/constants.dart' as constants;
+
+import 'group_list_tile.dart';
 
 class GroupsCard extends StatelessWidget {
   final List friends;
@@ -53,13 +55,11 @@ class GroupsCard extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: min(3, groups.length),
             itemBuilder: (context, int index) {
-              return ListTile(
-                visualDensity: const VisualDensity(
-                  vertical: VisualDensity.minimumDensity,
-                ),
-                title: Text(
-                  valuableGroups[index]['name'],
-                ),
+              return GroupListTile(
+                name: valuableGroups[index][constants.name],
+                onFavoritedToggle: () {},
+                onTap: () {},
+                favorited: valuableGroups[index][constants.favorited],
               );
             },
           ),
