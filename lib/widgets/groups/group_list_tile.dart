@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 class GroupListTile extends StatelessWidget {
   final String name;
-  final Function onFavoritedToggle;
-  final Function onTap;
+  final void Function()? onFavoritedToggle;
+  final void Function()? onTap;
   final bool favorited;
 
   const GroupListTile({
     Key? key,
     required this.name,
-    required this.onFavoritedToggle,
-    required this.onTap,
+    this.onFavoritedToggle,
+    this.onTap,
     required this.favorited,
   }) : super(key: key);
 
@@ -22,10 +22,10 @@ class GroupListTile extends StatelessWidget {
       ),
       title: Text(name),
       trailing: TextButton(
-        onPressed: () => onFavoritedToggle(),
+        onPressed: onFavoritedToggle,
         child: Icon(favorited ? Icons.favorite : Icons.favorite_outline),
       ),
-      onTap: () => onTap(),
+      onTap: onTap,
     );
   }
 }

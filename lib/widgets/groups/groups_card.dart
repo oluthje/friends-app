@@ -57,8 +57,6 @@ class GroupsCard extends StatelessWidget {
             itemBuilder: (context, int index) {
               return GroupListTile(
                 name: valuableGroups[index][constants.name],
-                onFavoritedToggle: () {},
-                onTap: () {},
                 favorited: valuableGroups[index][constants.favorited],
               );
             },

@@ -44,7 +44,7 @@ class FriendsCard extends StatelessWidget {
             itemBuilder: (context, int index) {
               return FriendsListTile(
                 name: sortedFriends[index][constants.name],
-                onTap: () {},
+                // onTap: () {},
               );
             },
           ),

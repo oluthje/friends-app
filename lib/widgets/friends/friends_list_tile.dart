@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class FriendsListTile extends StatelessWidget {
   final String name;
-  final Function onTap;
+  final void Function()? onTap;
 
   const FriendsListTile({
     Key? key,
     required this.name,
-    required this.onTap,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -18,7 +18,7 @@ class FriendsListTile extends StatelessWidget {
       visualDensity: const VisualDensity(
         vertical: VisualDensity.minimumDensity,
       ),
-      onTap: () => onTap(),
+      onTap: onTap,
     );
   }
 }
