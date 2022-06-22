@@ -20,24 +20,25 @@ class GroupsCard extends StatelessWidget {
     return DashboardCard(
       title: 'Groups',
       onPressed: () => showBottomSheet(
-          context: context,
-          builder: (context) => GroupsScreen(initFriends: friends, initGroups: groups),
+        context: context,
+        builder: (context) => GroupsScreen(initFriends: friends, initGroups: groups),
       ),
-      children: [
-        SizedBox(
-          height: 100,
-          child: ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: groups.length,
-              itemBuilder: (context, int index) {
-                return ListTile(
-                  visualDensity: const VisualDensity(vertical: VisualDensity.minimumDensity),
-                  title: Text(groups[index]['name']),
-                );
-              }
-            ),
+      child: Column(
+        children: [
+          ListView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.only(bottom: 0),
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: groups.length,
+            itemBuilder: (context, int index) {
+              return ListTile(
+                visualDensity: const VisualDensity(vertical: VisualDensity.minimumDensity),
+                title: Text(groups[index]['name']),
+              );
+            }
           ),
         ],
-      );
-    }
+      ),
+    );
   }
+}

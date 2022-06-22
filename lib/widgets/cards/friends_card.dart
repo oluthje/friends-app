@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '../../screens/friends_screen.dart';
 import 'package:friends/widgets/friends_list.dart';
@@ -17,15 +19,16 @@ class FriendsCard extends StatelessWidget {
     return DashboardCard(
       title: 'Friends',
       onPressed: () => showBottomSheet(
-          context: context,
-          builder: (context) => FriendsScreen(initFriends: friends),
+        context: context,
+        builder: (context) => FriendsScreen(initFriends: friends),
       ),
-      children: [
-        SizedBox(
-          height: 200,
-          child: ListView.builder(
+      child: Column(
+        children: [
+          ListView.builder(
+            padding: const EdgeInsets.only(bottom: 0),
+            shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: friends.length,
+            itemCount: min(5, friends.length),
             itemBuilder: (context, int index) {
               return ListTile(
                 visualDensity: const VisualDensity(vertical: VisualDensity.minimumDensity),
@@ -34,7 +37,8 @@ class FriendsCard extends StatelessWidget {
               );
             }
           ),
-        ),
-      ],
+        ],
+      ),
     );
-  }}
+  }
+}

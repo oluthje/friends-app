@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class DashboardCard extends StatelessWidget {
-  final List<Widget> children;
+  final Widget child;
   final String title;
   final Function onPressed;
 
   const DashboardCard({
     Key? key,
-    required this.children,
+    required this.child,
     required this.title,
     required this.onPressed,
   }) : super(key: key);
@@ -29,7 +29,7 @@ class DashboardCard extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
-          Column(children: children),
+          child,
           TextButton(
             onPressed: () => onPressed(),
             child: const Padding(
@@ -43,4 +43,5 @@ class DashboardCard extends StatelessWidget {
         ],
       ),
     );
-  }}
+  }
+}
