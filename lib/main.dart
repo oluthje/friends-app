@@ -28,13 +28,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
-    create: (context) => GoogleSignInProvider(),
-    child: const MaterialApp(
-      title: 'Sign in App!',
-      home: HomePage()
-    )
-
-  );
+      create: (context) => GoogleSignInProvider(),
+      child: const MaterialApp(title: 'Sign in App!', home: HomePage()));
 }
 
 class HomePage extends StatelessWidget {
@@ -43,21 +38,21 @@ class HomePage extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: StreamBuilder(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasData) {
-          return const FriendsApp(title: 'Friends');
-        } else if (snapshot.hasError) {
-          return const Center(child: Text('Something went wrong!!'));
-        } else {
-          return const SignUpWidget();
-        }
-      },
-    ),
-  );
+        body: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasData) {
+              return const FriendsApp(title: 'Friends');
+            } else if (snapshot.hasError) {
+              return const Center(child: Text('Something went wrong!!'));
+            } else {
+              return const SignUpWidget();
+            }
+          },
+        ),
+      );
 }
 
 class FriendsApp extends StatefulWidget {
@@ -73,13 +68,18 @@ class FriendsApp extends StatefulWidget {
 }
 
 class _FriendsApp extends State<FriendsApp> {
-
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
     final db = FirebaseFirestore.instance;
-    final Stream<QuerySnapshot> friends = db.collection(constants.friends).where(constants.userId, isEqualTo: user.uid).snapshots();
-    final Stream<QuerySnapshot> groups = db.collection(constants.groups).where(constants.userId, isEqualTo: user.uid).snapshots();
+    final Stream<QuerySnapshot> friends = db
+        .collection(constants.friends)
+        .where(constants.userId, isEqualTo: user.uid)
+        .snapshots();
+    final Stream<QuerySnapshot> groups = db
+        .collection(constants.groups)
+        .where(constants.userId, isEqualTo: user.uid)
+        .snapshots();
 
     return Scaffold(
       appBar: AppBar(
@@ -90,15 +90,16 @@ class _FriendsApp extends State<FriendsApp> {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: friends,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot1) {
-
+        builder:
+            (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot1) {
           return StreamBuilder<QuerySnapshot>(
             stream: groups,
-            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
-
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
               if (snapshot1.hasError || snapshot2.hasError) {
                 return Text('Error: ${snapshot1.error}. ${snapshot2.error}');
-              } if (snapshot1.connectionState == ConnectionState.waiting ||
+              }
+              if (snapshot1.connectionState == ConnectionState.waiting ||
                   snapshot2.connectionState == ConnectionState.waiting) {
                 return const Text('Data is loading');
               }
@@ -112,12 +113,24 @@ class _FriendsApp extends State<FriendsApp> {
                   children: <Widget>[
                     FriendsCard(friends: friendsDocs),
                     GroupsCard(friends: friendsDocs, groups: groupsDocs),
+
+                    // RIGHT HERE: perhaps put Friends/Groups screen modal here instead.
+                    // Otherwise modals won't have any shadow, or rounded corners.
+                    // TextButton(
+                    //   onPressed: () => showModalBottomSheet(
+                    //       context: context,
+                    //       builder: (context) {
+                    //         return Expanded(
+                    //             child: Text('Bottom modal in the house!!'));
+                    //       }),
+                    //   child: Text('Bottom Modal'),
+                    // ),
                   ],
                 ),
               );
-            }
+            },
           );
-        }
+        },
       ),
     );
   }

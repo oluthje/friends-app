@@ -24,17 +24,27 @@ class DashboardCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 16.0, top: 16.0),
-              child: Text(
-                'Friends',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0, top: 0.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  TextButton(
+                    onPressed: () => onPressed(),
+                    child: const Icon(Icons.arrow_forward_ios_outlined),
+                  ),
+                ],
               ),
             ),
             child,
           ],
         ),
-      )
+      ),
     );
   }
 }

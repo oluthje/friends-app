@@ -9,12 +9,13 @@ const friendIds = 'friend_ids';
 const name = 'name';
 const userId = 'user_id';
 const friendIntimacy = 'friend_intimacy';
+const favorited = 'favorited';
 
 // Other
 const numIntimacies = 4;
-enum Intimacies {
-  good, rising, newFriend, acquaintance
-}
+
+enum Intimacies { good, rising, newFriend, acquaintance }
+
 const Map<String, String> intimacyNames = {
   '0': 'Good',
   '1': 'Rising',

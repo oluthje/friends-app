@@ -1,9 +1,8 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:friends/screens/groups_screen.dart';
-import '../../screens/friends_screen.dart';
-import 'package:friends/widgets/friends_list.dart';
-
 import 'dashboard_card.dart';
+import 'package:friends/constants.dart' as constants;
 
 class GroupsCard extends StatelessWidget {
   final List friends;
@@ -15,13 +14,36 @@ class GroupsCard extends StatelessWidget {
     required this.groups,
   }) : super(key: key);
 
+  List sortedGroupsByImportance() {
+    List sorted = groups;
+
+    sorted.sort((group1, group2) {
+      if (getField(group2, constants.favorited, false)) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+
+    return sorted;
+  }
+
+  dynamic getField(doc, field, defualt) {
+    return doc.data().toString().contains(field) ? doc.get(field) : defualt;
+  }
+
   @override
   Widget build(BuildContext context) {
+    List valuableGroups = sortedGroupsByImportance();
+
     return DashboardCard(
       title: 'Groups',
       onPressed: () => showBottomSheet(
         context: context,
-        builder: (context) => GroupsScreen(initFriends: friends, initGroups: groups),
+        builder: (context) => GroupsScreen(
+          initFriends: friends,
+          initGroups: groups,
+        ),
       ),
       child: Column(
         children: [
@@ -29,13 +51,17 @@ class GroupsCard extends StatelessWidget {
             shrinkWrap: true,
             padding: const EdgeInsets.only(bottom: 0),
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: groups.length,
+            itemCount: min(3, groups.length),
             itemBuilder: (context, int index) {
               return ListTile(
-                visualDensity: const VisualDensity(vertical: VisualDensity.minimumDensity),
-                title: Text(groups[index]['name']),
+                visualDensity: const VisualDensity(
+                  vertical: VisualDensity.minimumDensity,
+                ),
+                title: Text(
+                  valuableGroups[index]['name'],
+                ),
               );
-            }
+            },
           ),
         ],
       ),

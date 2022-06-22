@@ -37,16 +37,20 @@ class _GroupsScreen extends State<GroupsScreen> {
     textFieldController.clear();
   }
 
-  void _editGroup(String id, String name, List selectedFriends) {
+  void _editGroup(
+      String id, String name, List selectedFriends, bool favorited) {
     final doc = db.collection(collectionPath).doc(id);
-    doc.update({constants.name: name, constants.friendIds: selectedFriends}).then((value) => null);
+    doc.update({
+      constants.name: name,
+      constants.friendIds: selectedFriends,
+      constants.favorited: favorited,
+    }).then((value) => null);
   }
 
   void _deleteGroup(String id) {
     final doc = db.collection(collectionPath).doc(id);
     doc.delete().then((doc) => null,
-      onError: (e) => print("Error updating document $e"));
-
+        onError: (e) => print("Error updating document $e"));
   }
 
   ModalAddItem addItemModal(name, doc, selectedFriendIDs) {
@@ -72,7 +76,7 @@ class _GroupsScreen extends State<GroupsScreen> {
         if (doc == '') {
           _addGroup(newName, friendIDs);
         } else {
-          _editGroup(doc.id, newName, friendIDs);
+          _editGroup(doc.id, newName, friendIDs, false);
         }
       },
       child: ItemSelection(
@@ -90,24 +94,36 @@ class _GroupsScreen extends State<GroupsScreen> {
   Widget build(BuildContext context) {
     // final groups = widget.groups;
     final db = FirebaseFirestore.instance;
-    final Stream<QuerySnapshot> friends = db.collection(constants.friends).where(constants.userId, isEqualTo: user.uid).snapshots();
-    final Stream<QuerySnapshot> groups = db.collection(constants.groups).where(constants.userId, isEqualTo: user.uid).snapshots();
+    final Stream<QuerySnapshot> friends = db
+        .collection(constants.friends)
+        .where(constants.userId, isEqualTo: user.uid)
+        .snapshots();
+    final Stream<QuerySnapshot> groups = db
+        .collection(constants.groups)
+        .where(constants.userId, isEqualTo: user.uid)
+        .snapshots();
+
+    dynamic getField(doc, field, defualt) {
+      return doc.data().toString().contains(field) ? doc.get(field) : defualt;
+    }
 
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
         stream: friends,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot1) {
+        builder:
+            (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot1) {
           return StreamBuilder<QuerySnapshot>(
             stream: groups,
-            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
-
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
               var friendsDocs = widget.initFriends;
               var groupsDocs = widget.initGroups;
 
               if (snapshot1.hasError || snapshot2.hasError) {
                 return Text('Error: ${snapshot1.error}. ${snapshot2.error}');
               }
-              if (snapshot1.connectionState != ConnectionState.waiting && snapshot2.connectionState != ConnectionState.waiting) {
+              if (snapshot1.connectionState != ConnectionState.waiting &&
+                  snapshot2.connectionState != ConnectionState.waiting) {
                 // return const Text('Data is loading');
                 friendsDocs = snapshot1.requireData.docs;
                 groupsDocs = snapshot2.requireData.docs;
@@ -119,13 +135,15 @@ class _GroupsScreen extends State<GroupsScreen> {
                   NotificationListener<UserScrollNotification>(
                     onNotification: (notification) {
                       final ScrollDirection direction = notification.direction;
-                      setState(() {
-                        if (direction == ScrollDirection.reverse) {
-                          visible = false;
-                        } else if (direction == ScrollDirection.forward) {
-                          visible = true;
-                        }
-                      });
+                      setState(
+                        () {
+                          if (direction == ScrollDirection.reverse) {
+                            visible = false;
+                          } else if (direction == ScrollDirection.forward) {
+                            visible = true;
+                          }
+                        },
+                      );
                       return true;
                     },
                     child: Expanded(
@@ -134,8 +152,11 @@ class _GroupsScreen extends State<GroupsScreen> {
                         itemCount: groupsDocs.length,
                         itemBuilder: (context, index) {
                           final doc = groupsDocs[index];
-                          final name = doc[constants.name];
-                          final selectedFriendIDs = doc[constants.friendIds];
+                          final String name = doc[constants.name];
+                          final bool favorited =
+                              getField(doc, constants.favorited, false);
+                          final List selectedFriendIDs =
+                              doc[constants.friendIds];
 
                           return Dismissible(
                             key: UniqueKey(),
@@ -145,6 +166,15 @@ class _GroupsScreen extends State<GroupsScreen> {
                             },
                             child: ListTile(
                               title: Text(name),
+                              trailing: TextButton(
+                                onPressed: () {
+                                  _editGroup(doc.id, name, selectedFriendIDs,
+                                      !favorited);
+                                },
+                                child: Icon(favorited
+                                    ? Icons.favorite
+                                    : Icons.favorite_outline),
+                              ),
                               onTap: () => showModalBottomSheet<void>(
                                 context: context,
                                 shape: const RoundedRectangleBorder(
@@ -153,7 +183,8 @@ class _GroupsScreen extends State<GroupsScreen> {
                                   ),
                                 ),
                                 builder: (BuildContext context) {
-                                  return addItemModal(name, doc, selectedFriendIDs);
+                                  return addItemModal(
+                                      name, doc, selectedFriendIDs);
                                 },
                               ),
                             ),
@@ -166,7 +197,7 @@ class _GroupsScreen extends State<GroupsScreen> {
               );
             },
           );
-        }
+        },
       ),
       floatingActionButton: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
@@ -189,7 +220,7 @@ class _GroupsScreen extends State<GroupsScreen> {
           backgroundColor: Colors.blue,
           child: const Icon(Icons.add),
         ),
-      )
+      ),
     );
   }
 }
