@@ -51,6 +51,16 @@ class _FriendsScreen extends State<FriendsScreen> {
         );
   }
 
+  dynamic noFriendsWarning(noFriends) {
+    if (noFriends) {
+      return const Padding(
+        padding: EdgeInsets.only(top: 16),
+        child: Text('No friends yet, click the button below to add some!'),
+      );
+    }
+    return const Padding(padding: EdgeInsets.zero);
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -60,47 +70,50 @@ class _FriendsScreen extends State<FriendsScreen> {
         .snapshots();
 
     return Scaffold(
-        body: StreamBuilder<QuerySnapshot>(
-            stream: friends,
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              var friendsDocs = widget.initFriends;
+      body: StreamBuilder<QuerySnapshot>(
+        stream: friends,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          var friendsDocs = widget.initFriends;
 
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-              if (snapshot.connectionState != ConnectionState.waiting) {
-                friendsDocs = snapshot.requireData.docs;
-              }
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+          if (snapshot.connectionState != ConnectionState.waiting) {
+            friendsDocs = snapshot.requireData.docs;
+          }
 
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  NotificationListener<UserScrollNotification>(
-                    onNotification: (notification) {
-                      final ScrollDirection direction = notification.direction;
-                      setState(() {
-                        if (direction == ScrollDirection.reverse) {
-                          visible = false;
-                        } else if (direction == ScrollDirection.forward) {
-                          visible = true;
-                        }
-                      });
-                      return true;
-                    },
-                    child: Expanded(
-                      child: FriendsList(
-                        addFriend: _addFriend,
-                        deleteFriend: _deleteFriend,
-                        editFriend: _editFriend,
-                        friends: friendsDocs,
-                      ),
-                    ),
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              noFriendsWarning(friendsDocs.isEmpty),
+              NotificationListener<UserScrollNotification>(
+                onNotification: (notification) {
+                  final ScrollDirection direction = notification.direction;
+                  setState(() {
+                    if (direction == ScrollDirection.reverse) {
+                      visible = false;
+                    } else if (direction == ScrollDirection.forward) {
+                      visible = true;
+                    }
+                  });
+                  return true;
+                },
+                child: Expanded(
+                  child: FriendsList(
+                    addFriend: _addFriend,
+                    deleteFriend: _deleteFriend,
+                    editFriend: _editFriend,
+                    friends: friendsDocs,
                   ),
-                ],
-              );
-            }),
-        floatingActionButton: AnimatedContainer(
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           curve: Curves.fastOutSlowIn,
           transform: Matrix4.translationValues(0, visible ? 0 : 100, 0),
@@ -127,6 +140,8 @@ class _FriendsScreen extends State<FriendsScreen> {
             backgroundColor: Colors.blue,
             child: const Icon(Icons.add),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

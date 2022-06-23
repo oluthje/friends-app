@@ -40,6 +40,9 @@ class GroupsCard extends StatelessWidget {
 
     return DashboardCard(
       title: 'Groups',
+      icon: const Icon(Icons.groups),
+      emptyCardMessage:
+          groups.isEmpty ? "No groups yet, click here to add some!" : null,
       onPressed: () => showBottomSheet(
         context: context,
         builder: (context) => GroupsScreen(

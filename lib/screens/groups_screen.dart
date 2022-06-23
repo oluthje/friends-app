@@ -34,6 +34,7 @@ class _GroupsScreen extends State<GroupsScreen> {
       constants.name: name,
       constants.friendIds: friendIDs,
       constants.userId: user.uid,
+      constants.favorited: false,
     });
     textFieldController.clear();
   }
@@ -90,6 +91,16 @@ class _GroupsScreen extends State<GroupsScreen> {
     );
   }
 
+  dynamic noGroupsWarning(noGroups) {
+    if (noGroups) {
+      return const Padding(
+        padding: EdgeInsets.only(top: 16),
+        child: Text('No groups yet, click the button below to add some!'),
+      );
+    }
+    return const Padding(padding: EdgeInsets.zero);
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -133,6 +144,7 @@ class _GroupsScreen extends State<GroupsScreen> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  noGroupsWarning(groupsDocs.isEmpty),
                   NotificationListener<UserScrollNotification>(
                     onNotification: (notification) {
                       final ScrollDirection direction = notification.direction;
@@ -194,26 +206,29 @@ class _GroupsScreen extends State<GroupsScreen> {
           );
         },
       ),
-      floatingActionButton: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.fastOutSlowIn,
-        transform: Matrix4.translationValues(0, visible ? 0 : 100, 0),
-        child: FloatingActionButton(
-          onPressed: () {
-            showModalBottomSheet<void>(
-              context: context,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(25.0),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.fastOutSlowIn,
+          transform: Matrix4.translationValues(0, visible ? 0 : 100, 0),
+          child: FloatingActionButton(
+            onPressed: () {
+              showModalBottomSheet<void>(
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(25.0),
+                  ),
                 ),
-              ),
-              builder: (BuildContext context) {
-                return addItemModal('', '', []);
-              },
-            );
-          },
-          backgroundColor: Colors.blue,
-          child: const Icon(Icons.add),
+                builder: (BuildContext context) {
+                  return addItemModal('', '', []);
+                },
+              );
+            },
+            backgroundColor: Colors.blue,
+            child: const Icon(Icons.add),
+          ),
         ),
       ),
     );

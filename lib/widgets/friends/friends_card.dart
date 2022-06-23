@@ -9,7 +9,10 @@ import 'package:friends/constants.dart' as constants;
 class FriendsCard extends StatelessWidget {
   final List friends;
 
-  const FriendsCard({Key? key, required this.friends}) : super(key: key);
+  const FriendsCard({
+    Key? key,
+    required this.friends,
+  }) : super(key: key);
 
   List sortedFriendsByImportance() {
     List sorted = friends;
@@ -28,6 +31,9 @@ class FriendsCard extends StatelessWidget {
 
     return DashboardCard(
       title: 'Friends',
+      icon: const Icon(Icons.home),
+      emptyCardMessage:
+          friends.isEmpty ? "No friends yet, click here to add some!" : null,
       onPressed: () => showBottomSheet(
         context: context,
         builder: (context) => SizedBox(
@@ -44,7 +50,6 @@ class FriendsCard extends StatelessWidget {
             itemBuilder: (context, int index) {
               return FriendsListTile(
                 name: sortedFriends[index][constants.name],
-                // onTap: () {},
               );
             },
           ),
