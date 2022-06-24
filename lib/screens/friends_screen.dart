@@ -36,6 +36,7 @@ class _FriendsScreen extends State<FriendsScreen> {
   }
 
   void _editFriend(String id, String name, int intimacy) {
+    print('id: $id');
     final doc = db.collection(collectionPath).doc(id);
     doc.update({
       constants.name: name,
@@ -61,7 +62,28 @@ class _FriendsScreen extends State<FriendsScreen> {
     return const Padding(padding: EdgeInsets.zero);
   }
 
-  // This widget is the root of your application.
+  dynamic showFriendModal(
+      BuildContext context, String name, String id, int intimacy) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25.0),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return FriendModal(
+          name: name,
+          id: id,
+          intimacy: intimacy,
+          editFriend: _editFriend,
+          addFriend: _addFriend,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> friends = db
@@ -100,10 +122,9 @@ class _FriendsScreen extends State<FriendsScreen> {
                 },
                 child: Expanded(
                   child: FriendsList(
-                    addFriend: _addFriend,
                     deleteFriend: _deleteFriend,
-                    editFriend: _editFriend,
                     friends: friendsDocs,
+                    showFriendModal: showFriendModal,
                   ),
                 ),
               ),
@@ -118,26 +139,9 @@ class _FriendsScreen extends State<FriendsScreen> {
           curve: Curves.fastOutSlowIn,
           transform: Matrix4.translationValues(0, visible ? 0 : 100, 0),
           child: FloatingActionButton(
-            onPressed: () {
-              showModalBottomSheet<void>(
-                context: context,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(25.0),
-                  ),
-                ),
-                builder: (BuildContext context) {
-                  return FriendModal(
-                    name: '',
-                    id: '',
-                    intimacy: constants.Intimacies.newFriend.index,
-                    editFriend: _editFriend,
-                    addFriend: _addFriend,
-                  );
-                },
-              );
-            },
             backgroundColor: Colors.blue,
+            onPressed: () => showFriendModal(
+                context, '', '', constants.Intimacies.newFriend.index),
             child: const Icon(Icons.add),
           ),
         ),

@@ -3,20 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:friends/widgets/friends/friends_list_tile.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:friends/constants.dart' as constants;
-import 'package:friends/widgets/friends/friend_modal.dart';
 
 class FriendsList extends StatelessWidget {
   final List friends;
-  final Function addFriend;
-  final Function editFriend;
   final Function deleteFriend;
+  final Function showFriendModal;
 
   const FriendsList({
     Key? key,
     required this.friends,
-    required this.addFriend,
-    required this.editFriend,
     required this.deleteFriend,
+    required this.showFriendModal,
   }) : super(key: key);
 
   int getIntimacy(element) {
@@ -52,7 +49,7 @@ class FriendsList extends StatelessWidget {
         itemBuilder: (context, dynamic element) {
           final DocumentSnapshot doc = element;
           final name = doc[constants.name];
-          int intimacy = getIntimacy(element);
+          final intimacy = getIntimacy(doc);
 
           return Dismissible(
             key: UniqueKey(),
@@ -63,17 +60,11 @@ class FriendsList extends StatelessWidget {
             child: Card(
               child: FriendsListTile(
                 name: name,
-                onTap: () => showModalBottomSheet<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return FriendModal(
-                      name: name,
-                      id: doc.id,
-                      intimacy: intimacy,
-                      editFriend: editFriend,
-                      addFriend: addFriend,
-                    );
-                  },
+                onTap: () => showFriendModal(
+                  context,
+                  name,
+                  doc.id,
+                  intimacy,
                 ),
               ),
             ),

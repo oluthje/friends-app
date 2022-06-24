@@ -109,7 +109,7 @@ class _FriendsApp extends State<FriendsApp> {
 
               return Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
+                child: Wrap(
                   children: <Widget>[
                     FriendsCard(friends: friendsDocs),
                     GroupsCard(friends: friendsDocs, groups: groupsDocs),

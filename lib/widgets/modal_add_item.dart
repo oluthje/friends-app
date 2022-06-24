@@ -22,11 +22,18 @@ class ModalAddItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 500,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(25.0),
+    final keyboardSize = MediaQuery.of(context).viewInsets.bottom;
+    final double bottomPadding = keyboardSize < 25 ? 25 : keyboardSize;
+
+    return Wrap(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(
+            left: 25.0,
+            right: 25.0,
+            top: 25.0,
+            bottom: bottomPadding,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -57,8 +64,8 @@ class ModalAddItem extends StatelessWidget {
               ),
             ],
           ),
-        )
-      ),
+        ),
+      ],
     );
   }
 }
