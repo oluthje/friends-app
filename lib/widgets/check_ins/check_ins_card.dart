@@ -6,20 +6,31 @@ import '../../screens/friends_screen.dart';
 import '../cards/dashboard_card.dart';
 import 'package:friends/constants.dart' as constants;
 
-class FriendsCard extends StatelessWidget {
+class CheckInsCard extends StatelessWidget {
   final List friends;
 
-  const FriendsCard({
+  const CheckInsCard({
     Key? key,
     required this.friends,
   }) : super(key: key);
 
-  List sortedFriendsByImportance() {
+  int getCheckinImportance(checkinInteral) {
+    var importance = constants.checkinIntervalNames.indexOf(checkinInteral);
+    if (importance == 0) return 100;
+    return importance;
+  }
+
+  // Sort friends by how often their check in is.
+  List sortedFriendsByCheckins() {
     List sorted = friends;
 
     sorted.sort((friend1, friend2) {
-      return (friend1[constants.friendIntimacy]
-          .compareTo(friend2[constants.friendIntimacy]));
+      final friend1Value = getCheckinImportance(constants.getField(friend1,
+          constants.checkinInterval, constants.checkinIntervalNames[0]));
+      final friend2Value = getCheckinImportance(constants.getField(friend2,
+          constants.checkinInterval, constants.checkinIntervalNames[0]));
+
+      return (friend1Value.compareTo(friend2Value));
     });
 
     return sorted;
@@ -27,30 +38,30 @@ class FriendsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List sortedFriends = sortedFriendsByImportance();
+    List sortedFriends = sortedFriendsByCheckins();
 
     return DashboardCard(
-      title: 'Friends',
-      icon: const Icon(Icons.home),
+      title: 'Check Ins',
+      icon: const Icon(Icons.check),
       emptyCardMessage:
-          friends.isEmpty ? "No friends yet, click here to add some!" : null,
+          friends.isEmpty ? "No checkins yet, click here to add some!" : null,
       onPressed: () => showBottomSheet(
         context: context,
         builder: (context) => SizedBox(
           child: FriendsScreen(initFriends: friends),
         ),
       ),
+      // child: Container(),
       child: Column(
         children: [
           ListView.builder(
             padding: const EdgeInsets.only(bottom: 0),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: min(4, friends.length),
+            itemCount: min(3, friends.length),
             itemBuilder: (context, int index) {
-              final friend = sortedFriends[index];
-              final name = friend[constants.name];
-              final checkinInterval = constants.getField(friend,
+              final name = sortedFriends[index][constants.name];
+              final checkinInterval = constants.getField(sortedFriends[index],
                   constants.checkinInterval, constants.checkinIntervalNames[0]);
 
               return FriendsListTile(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:friends/widgets/modal_add_item.dart';
 import 'package:friends/widgets/intimacy_selection.dart';
+import 'package:friends/widgets/friends/checkin_dropdown_menu.dart';
+import 'package:friends/constants.dart' as constants;
 
 class FriendModal extends StatefulWidget {
   final String? name;
@@ -9,6 +11,7 @@ class FriendModal extends StatefulWidget {
   final Function addFriend;
   final Function editFriend;
   final int intimacy;
+  final String initCheckinInterval;
 
   const FriendModal({
     Key? key,
@@ -17,6 +20,7 @@ class FriendModal extends StatefulWidget {
     required this.intimacy,
     required this.addFriend,
     required this.editFriend,
+    required this.initCheckinInterval,
   }) : super(key: key);
 
   @override
@@ -25,6 +29,7 @@ class FriendModal extends StatefulWidget {
 
 class _FriendModal extends State<FriendModal> {
   late int intimacy;
+  late String checkinInterval = widget.initCheckinInterval;
 
   @override
   void initState() {
@@ -38,19 +43,31 @@ class _FriendModal extends State<FriendModal> {
       name: widget.name ?? '',
       onSubmit: (newName) {
         if (widget.id == '') {
-          widget.addFriend(newName, intimacy);
+          widget.addFriend(newName, intimacy, checkinInterval);
         } else {
-          widget.editFriend(widget.id, newName, intimacy);
+          widget.editFriend(widget.id, newName, intimacy, checkinInterval);
         }
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 14.0),
-        child: IntimacySelection(
-          intimacy: intimacy,
-          onChange: (newIntimacy) {
-            intimacy = newIntimacy;
-          },
-        )
+        child: Column(
+          children: [
+            IntimacySelection(
+              intimacy: intimacy,
+              onChange: (newIntimacy) {
+                intimacy = newIntimacy;
+              },
+            ),
+            CheckinDropdownMenu(
+              checkinInterval: checkinInterval,
+              onChanged: (String? newValue) {
+                setState(() {
+                  checkinInterval = newValue!;
+                });
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

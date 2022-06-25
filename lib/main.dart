@@ -12,6 +12,7 @@ import 'package:friends/constants.dart' as constants;
 import 'package:friends/widgets/profile_button.dart';
 import 'package:friends/widgets/friends/friends_card.dart';
 import 'package:friends/widgets/groups/groups_card.dart';
+import 'package:friends/widgets/check_ins/check_ins_card.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -83,7 +84,7 @@ class _FriendsApp extends State<FriendsApp> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Friends'),
+        title: const Text('Dashboard'),
         actions: <Widget>[
           ProfileButton(user: user),
         ],
@@ -108,24 +109,28 @@ class _FriendsApp extends State<FriendsApp> {
               final groupsDocs = snapshot2.requireData.docs;
 
               return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Wrap(
-                  children: <Widget>[
-                    FriendsCard(friends: friendsDocs),
-                    GroupsCard(friends: friendsDocs, groups: groupsDocs),
+                padding: const EdgeInsets.only(
+                    top: 8.0, left: 8.0, right: 8.0, bottom: 25.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      FriendsCard(friends: friendsDocs),
+                      GroupsCard(friends: friendsDocs, groups: groupsDocs),
+                      CheckInsCard(friends: friendsDocs),
 
-                    // RIGHT HERE: perhaps put Friends/Groups screen modal here instead.
-                    // Otherwise modals won't have any shadow, or rounded corners.
-                    // TextButton(
-                    //   onPressed: () => showModalBottomSheet(
-                    //       context: context,
-                    //       builder: (context) {
-                    //         return Expanded(
-                    //             child: Text('Bottom modal in the house!!'));
-                    //       }),
-                    //   child: Text('Bottom Modal'),
-                    // ),
-                  ],
+                      // RIGHT HERE: perhaps put Friends/Groups screen modal here instead.
+                      // Otherwise modals won't have any shadow, or rounded corners.
+                      // TextButton(
+                      //   onPressed: () => showModalBottomSheet(
+                      //       context: context,
+                      //       builder: (context) {
+                      //         return Expanded(
+                      //             child: Text('Bottom modal in the house!!'));
+                      //       }),
+                      //   child: Text('Bottom Modal'),
+                      // ),
+                    ],
+                  ),
                 ),
               );
             },

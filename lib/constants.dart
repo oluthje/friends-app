@@ -10,6 +10,7 @@ const name = 'name';
 const userId = 'user_id';
 const friendIntimacy = 'friend_intimacy';
 const favorited = 'favorited';
+const checkinInterval = 'checkin_interval';
 
 // Other
 const numIntimacies = 4;
@@ -22,3 +23,18 @@ const Map<String, String> intimacyNames = {
   '2': 'New',
   '3': 'Acquainted',
 };
+
+enum CheckinIntervals { daily, biweekly, weekly, monthly, yearly }
+
+const List<String> checkinIntervalNames = [
+  'None',
+  'Daily',
+  'Biweekly',
+  'Weekly',
+  'Monthly',
+  'Yearly'
+];
+
+dynamic getField(doc, field, defualt) {
+  return doc.data().toString().contains(field) ? doc.get(field) : defualt;
+}

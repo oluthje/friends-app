@@ -26,21 +26,23 @@ class _FriendsScreen extends State<FriendsScreen> {
   final textFieldController = TextEditingController();
   bool visible = true;
 
-  void _addFriend(String text, int intimacy) {
+  void _addFriend(String text, int intimacy, String checkinInterval) {
     db.collection(collectionPath).add({
       constants.name: text,
       constants.userId: user.uid,
       constants.friendIntimacy: intimacy,
+      constants.checkinInterval: checkinInterval,
     });
     textFieldController.clear();
   }
 
-  void _editFriend(String id, String name, int intimacy) {
-    print('id: $id');
+  void _editFriend(
+      String id, String name, int intimacy, String checkinInterval) {
     final doc = db.collection(collectionPath).doc(id);
     doc.update({
       constants.name: name,
       constants.friendIntimacy: intimacy,
+      constants.checkinInterval: checkinInterval,
     }).then((value) => null);
   }
 
@@ -62,8 +64,8 @@ class _FriendsScreen extends State<FriendsScreen> {
     return const Padding(padding: EdgeInsets.zero);
   }
 
-  dynamic showFriendModal(
-      BuildContext context, String name, String id, int intimacy) {
+  dynamic showFriendModal(BuildContext context, String name, String id,
+      int intimacy, String checkinInterval) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -79,6 +81,7 @@ class _FriendsScreen extends State<FriendsScreen> {
           intimacy: intimacy,
           editFriend: _editFriend,
           addFriend: _addFriend,
+          initCheckinInterval: checkinInterval,
         );
       },
     );
@@ -141,7 +144,12 @@ class _FriendsScreen extends State<FriendsScreen> {
           child: FloatingActionButton(
             backgroundColor: Colors.blue,
             onPressed: () => showFriendModal(
-                context, '', '', constants.Intimacies.newFriend.index),
+              context,
+              '',
+              '',
+              constants.Intimacies.newFriend.index,
+              constants.checkinIntervalNames[0],
+            ),
             child: const Icon(Icons.add),
           ),
         ),
