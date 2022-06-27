@@ -7,7 +7,6 @@ import 'firebase_options.dart';
 
 import 'package:friends/util/google_sign_in.dart';
 import 'package:friends/widgets/sign_up_widget.dart';
-import 'package:friends/screens/groups_screen.dart';
 import 'package:friends/constants.dart' as constants;
 import 'package:friends/widgets/profile_button.dart';
 import 'package:friends/widgets/friends/friends_card.dart';
@@ -117,18 +116,6 @@ class _FriendsApp extends State<FriendsApp> {
                       FriendsCard(friends: friendsDocs),
                       GroupsCard(friends: friendsDocs, groups: groupsDocs),
                       CheckInsCard(friends: friendsDocs),
-
-                      // RIGHT HERE: perhaps put Friends/Groups screen modal here instead.
-                      // Otherwise modals won't have any shadow, or rounded corners.
-                      // TextButton(
-                      //   onPressed: () => showModalBottomSheet(
-                      //       context: context,
-                      //       builder: (context) {
-                      //         return Expanded(
-                      //             child: Text('Bottom modal in the house!!'));
-                      //       }),
-                      //   child: Text('Bottom Modal'),
-                      // ),
                     ],
                   ),
                 ),

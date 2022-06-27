@@ -45,13 +45,12 @@ class CheckInsCard extends StatelessWidget {
       icon: const Icon(Icons.check),
       emptyCardMessage:
           friends.isEmpty ? "No checkins yet, click here to add some!" : null,
-      onPressed: () => showBottomSheet(
-        context: context,
-        builder: (context) => SizedBox(
-          child: FriendsScreen(initFriends: friends),
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FriendsScreen(initFriends: friends),
         ),
       ),
-      // child: Container(),
       child: Column(
         children: [
           ListView.builder(

@@ -95,6 +95,7 @@ class _FriendsScreen extends State<FriendsScreen> {
         .snapshots();
 
     return Scaffold(
+      appBar: AppBar(title: const Text('Friends')),
       body: StreamBuilder<QuerySnapshot>(
         stream: friends,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -135,23 +136,20 @@ class _FriendsScreen extends State<FriendsScreen> {
           );
         },
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.fastOutSlowIn,
-          transform: Matrix4.translationValues(0, visible ? 0 : 100, 0),
-          child: FloatingActionButton(
-            backgroundColor: Colors.blue,
-            onPressed: () => showFriendModal(
-              context,
-              '',
-              '',
-              constants.Intimacies.newFriend.index,
-              constants.checkinIntervalNames[0],
-            ),
-            child: const Icon(Icons.add),
+      floatingActionButton: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.fastOutSlowIn,
+        transform: Matrix4.translationValues(0, visible ? 0 : 110, 0),
+        child: FloatingActionButton(
+          backgroundColor: Colors.blue,
+          onPressed: () => showFriendModal(
+            context,
+            '',
+            '',
+            constants.Intimacies.newFriend.index,
+            constants.checkinIntervalNames[0],
           ),
+          child: const Icon(Icons.add),
         ),
       ),
     );

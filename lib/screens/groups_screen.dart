@@ -120,6 +120,7 @@ class _GroupsScreen extends State<GroupsScreen> {
     }
 
     return Scaffold(
+      appBar: AppBar(title: const Text('Groups')),
       body: StreamBuilder<QuerySnapshot>(
         stream: friends,
         builder:
@@ -128,7 +129,6 @@ class _GroupsScreen extends State<GroupsScreen> {
             stream: groups,
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
-              // var friendsDocs = widget.initFriends;
               var groupsDocs = widget.initGroups;
 
               if (snapshot1.hasError || snapshot2.hasError) {
@@ -136,8 +136,6 @@ class _GroupsScreen extends State<GroupsScreen> {
               }
               if (snapshot1.connectionState != ConnectionState.waiting &&
                   snapshot2.connectionState != ConnectionState.waiting) {
-                // return const Text('Data is loading');
-                // friendsDocs = snapshot1.requireData.docs;
                 groupsDocs = snapshot2.requireData.docs;
               }
 

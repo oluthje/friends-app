@@ -43,11 +43,11 @@ class GroupsCard extends StatelessWidget {
       icon: const Icon(Icons.groups),
       emptyCardMessage:
           groups.isEmpty ? "No groups yet, click here to add some!" : null,
-      onPressed: () => showBottomSheet(
-        context: context,
-        builder: (context) => GroupsScreen(
-          initFriends: friends,
-          initGroups: groups,
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              GroupsScreen(initFriends: friends, initGroups: groups),
         ),
       ),
       child: Column(

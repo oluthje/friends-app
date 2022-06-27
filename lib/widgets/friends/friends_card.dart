@@ -34,10 +34,10 @@ class FriendsCard extends StatelessWidget {
       icon: const Icon(Icons.home),
       emptyCardMessage:
           friends.isEmpty ? "No friends yet, click here to add some!" : null,
-      onPressed: () => showBottomSheet(
-        context: context,
-        builder: (context) => SizedBox(
-          child: FriendsScreen(initFriends: friends),
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FriendsScreen(initFriends: friends),
         ),
       ),
       child: Column(
