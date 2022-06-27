@@ -5,10 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
-import 'package:friends/util/google_sign_in.dart';
-import 'package:friends/widgets/sign_up_widget.dart';
+import 'package:friends/authentication/google_sign_in.dart';
+import 'package:friends/authentication/sign_up_widget.dart';
 import 'package:friends/constants.dart' as constants;
-import 'package:friends/widgets/profile_button.dart';
+import 'package:friends/widgets/dashboard/profile_button.dart';
 import 'package:friends/widgets/friends/friends_card.dart';
 import 'package:friends/widgets/groups/groups_card.dart';
 import 'package:friends/widgets/check_ins/check_ins_card.dart';

@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:friends/screens/groups_screen.dart';
+import 'package:friends/widgets/groups/groups_screen.dart';
 import '../cards/dashboard_card.dart';
 import 'package:friends/constants.dart' as constants;
 
@@ -34,6 +36,42 @@ class GroupsCard extends StatelessWidget {
     return doc.data().toString().contains(field) ? doc.get(field) : defualt;
   }
 
+  Widget buildGroupsScreen(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser!;
+    final Stream<QuerySnapshot> friendsSnapshots = FirebaseFirestore.instance
+        .collection(constants.friends)
+        .where(constants.userId, isEqualTo: user.uid)
+        .snapshots();
+    final Stream<QuerySnapshot> groupsSnapshots = FirebaseFirestore.instance
+        .collection(constants.groups)
+        .where(constants.userId, isEqualTo: user.uid)
+        .snapshots();
+
+    return StreamBuilder(
+      stream: friendsSnapshots,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot1) {
+        return StreamBuilder(
+          stream: groupsSnapshots,
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
+            if (snapshot1.hasError || snapshot2.hasError) {
+              return Text('Error: ${snapshot1.error}. ${snapshot2.error}');
+            }
+            if (snapshot1.connectionState == ConnectionState.waiting ||
+                snapshot2.connectionState == ConnectionState.waiting) {
+              return const Text('Waiting on data');
+            }
+
+            var friendsDocs = snapshot1.requireData.docs;
+            var groupsDocs = snapshot2.requireData.docs;
+
+            return GroupsScreen(friends: friendsDocs, groups: groupsDocs);
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List valuableGroups = sortedGroupsByImportance();
@@ -46,8 +84,7 @@ class GroupsCard extends StatelessWidget {
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              GroupsScreen(initFriends: friends, initGroups: groups),
+          builder: buildGroupsScreen,
         ),
       ),
       child: Column(

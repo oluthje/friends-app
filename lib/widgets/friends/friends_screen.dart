@@ -8,11 +8,11 @@ import 'package:friends/widgets//friends/friend_modal.dart';
 import 'package:friends/widgets/friends/friends_list.dart';
 
 class FriendsScreen extends StatefulWidget {
-  final List initFriends;
+  final List friends;
 
   const FriendsScreen({
     Key? key,
-    required this.initFriends,
+    required this.friends,
   }) : super(key: key);
 
   @override
@@ -89,52 +89,33 @@ class _FriendsScreen extends State<FriendsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> friends = db
-        .collection(constants.friends)
-        .where(constants.userId, isEqualTo: user.uid)
-        .snapshots();
-
     return Scaffold(
       appBar: AppBar(title: const Text('Friends')),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: friends,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          var friendsDocs = widget.initFriends;
-
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-          if (snapshot.connectionState != ConnectionState.waiting) {
-            friendsDocs = snapshot.requireData.docs;
-          }
-
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              noFriendsWarning(friendsDocs.isEmpty),
-              NotificationListener<UserScrollNotification>(
-                onNotification: (notification) {
-                  final ScrollDirection direction = notification.direction;
-                  setState(() {
-                    if (direction == ScrollDirection.reverse) {
-                      visible = false;
-                    } else if (direction == ScrollDirection.forward) {
-                      visible = true;
-                    }
-                  });
-                  return true;
-                },
-                child: Expanded(
-                  child: FriendsList(
-                    deleteFriend: _deleteFriend,
-                    friends: friendsDocs,
-                    showFriendModal: showFriendModal,
-                  ),
-                ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          noFriendsWarning(widget.friends.isEmpty),
+          NotificationListener<UserScrollNotification>(
+            onNotification: (notification) {
+              final ScrollDirection direction = notification.direction;
+              setState(() {
+                if (direction == ScrollDirection.reverse) {
+                  visible = false;
+                } else if (direction == ScrollDirection.forward) {
+                  visible = true;
+                }
+              });
+              return true;
+            },
+            child: Expanded(
+              child: FriendsList(
+                deleteFriend: _deleteFriend,
+                friends: widget.friends,
+                showFriendModal: showFriendModal,
               ),
-            ],
-          );
-        },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: AnimatedContainer(
         duration: const Duration(milliseconds: 250),

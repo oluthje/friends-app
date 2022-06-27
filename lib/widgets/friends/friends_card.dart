@@ -1,8 +1,10 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:friends/widgets/friends/friends_list_tile.dart';
-import '../../screens/friends_screen.dart';
+import 'friends_screen.dart';
 import '../cards/dashboard_card.dart';
 import 'package:friends/constants.dart' as constants;
 
@@ -25,6 +27,30 @@ class FriendsCard extends StatelessWidget {
     return sorted;
   }
 
+  Widget buildFriendsScreen(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser!;
+    final Stream<QuerySnapshot> friendsSnapshots = FirebaseFirestore.instance
+        .collection(constants.friends)
+        .where(constants.userId, isEqualTo: user.uid)
+        .snapshots();
+
+    return StreamBuilder(
+      stream: friendsSnapshots,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text('Waiting on data');
+        }
+
+        var friendsDocs = snapshot.requireData.docs;
+
+        return FriendsScreen(friends: friendsDocs);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List sortedFriends = sortedFriendsByImportance();
@@ -37,7 +63,7 @@ class FriendsCard extends StatelessWidget {
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => FriendsScreen(initFriends: friends),
+          builder: buildFriendsScreen,
         ),
       ),
       child: Column(
