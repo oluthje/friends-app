@@ -77,7 +77,7 @@ class FriendsCard extends StatelessWidget {
               final friend = sortedFriends[index];
               final name = friend[constants.name];
               final checkinInterval = constants.getField(friend,
-                  constants.checkinInterval, constants.checkinIntervalNames[0]);
+                  constants.checkInInterval, constants.checkinIntervalNames[0]);
 
               return FriendsListTile(
                 name: name,

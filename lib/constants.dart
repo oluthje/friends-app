@@ -10,7 +10,9 @@ const name = 'name';
 const userId = 'user_id';
 const friendIntimacy = 'friend_intimacy';
 const favorited = 'favorited';
-const checkinInterval = 'checkin_interval';
+const checkInInterval = 'check_in_interval';
+const checkInBaseDate = 'check_in_base_date';
+const checkInDates = 'check_in_dates';
 
 // Other
 const numIntimacies = 4;
@@ -35,6 +37,15 @@ const List<String> checkinIntervalNames = [
   'Yearly'
 ];
 
-dynamic getField(doc, field, defualt) {
+Map checkinIntervalDays = {
+  checkinIntervalNames[0]: 0,
+  checkinIntervalNames[1]: 1,
+  checkinIntervalNames[2]: 3,
+  checkinIntervalNames[3]: 7,
+  checkinIntervalNames[4]: 30,
+  checkinIntervalNames[5]: 365,
+};
+
+dynamic getField(doc, String field, defualt) {
   return doc.data().toString().contains(field) ? doc.get(field) : defualt;
 }

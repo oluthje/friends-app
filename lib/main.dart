@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import 'firebase_options.dart';
 
 import 'package:friends/authentication/google_sign_in.dart';
 import 'package:friends/authentication/sign_up_widget.dart';
@@ -15,21 +14,22 @@ import 'package:friends/widgets/check_ins/check_ins_card.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  await Firebase.initializeApp();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
-
-  final Future<FirebaseApp> _fbApp = Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
-      create: (context) => GoogleSignInProvider(),
-      child: const MaterialApp(title: 'Sign in App!', home: HomePage()));
+        create: (context) => GoogleSignInProvider(),
+        child: const MaterialApp(
+          title: 'Sign in App!',
+          home: HomePage(),
+        ),
+      );
 }
 
 class HomePage extends StatelessWidget {

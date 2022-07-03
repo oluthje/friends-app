@@ -4,12 +4,14 @@ class FriendsListTile extends StatelessWidget {
   final String name;
   final String? checkinInterval;
   final void Function()? onTap;
+  final Widget? trailing;
 
   const FriendsListTile({
     Key? key,
     required this.name,
     this.checkinInterval,
     this.onTap,
+    this.trailing,
   }) : super(key: key);
 
   @override
@@ -28,6 +30,7 @@ class FriendsListTile extends StatelessWidget {
           Text(checkinName),
         ],
       ),
+      trailing: trailing,
       visualDensity: const VisualDensity(
         vertical: VisualDensity.minimumDensity,
       ),

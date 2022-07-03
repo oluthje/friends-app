@@ -1,15 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 
+import 'package:friends/check_in/check_in.dart';
 import 'package:friends/constants.dart' as constants;
-// import 'package:friends/widgets//friends/friend_modal.dart';
-// import 'package:friends/widgets/friends/friends_list.dart';
+import 'package:friends/data_storage/data_storage.dart';
 import 'package:friends/widgets/friends/friends_list_tile.dart';
 
 class CheckInsScreen extends StatefulWidget {
-  final List friends;
+  final List<dynamic> friends;
 
   const CheckInsScreen({
     Key? key,
@@ -21,6 +21,8 @@ class CheckInsScreen extends StatefulWidget {
 }
 
 class _CheckInsScreen extends State<CheckInsScreen> {
+  final CheckInStorage checkInStorage = CheckInStorage();
+  final CheckInCalculator checkInCalculator = CheckInCalculator();
   final textFieldController = TextEditingController();
   bool visible = true;
 
@@ -34,8 +36,39 @@ class _CheckInsScreen extends State<CheckInsScreen> {
     return const Padding(padding: EdgeInsets.zero);
   }
 
+  int getCheckinImportance(checkinInteral) {
+    var importance = constants.checkinIntervalNames.indexOf(checkinInteral);
+    if (importance == 0) return 100;
+    return importance;
+  }
+
+  bool hasCheckIn(friend) {
+    return constants.getField(friend, constants.checkInInterval,
+            constants.checkinIntervalNames[0]) !=
+        constants.checkinIntervalNames[0];
+  }
+
+  List sortedFriendsByCheckins() {
+    List sorted = widget.friends;
+
+    sorted.removeWhere((element) => !hasCheckIn(element));
+
+    sorted.sort((friend1, friend2) {
+      final friend1Value = getCheckinImportance(constants.getField(friend1,
+          constants.checkInInterval, constants.checkinIntervalNames[0]));
+      final friend2Value = getCheckinImportance(constants.getField(friend2,
+          constants.checkInInterval, constants.checkinIntervalNames[0]));
+
+      return (friend1Value.compareTo(friend2Value));
+    });
+
+    return sorted;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final sortedFriends = sortedFriendsByCheckins();
+
     return Scaffold(
       appBar: AppBar(title: const Text('Check Ins')),
       body: Column(
@@ -57,11 +90,58 @@ class _CheckInsScreen extends State<CheckInsScreen> {
             child: Expanded(
               child: ListView.builder(
                 itemBuilder: (BuildContext context, index) {
-                  final name = widget.friends[index][constants.name];
+                  final friend = sortedFriends[index];
+                  final name = friend[constants.name];
 
-                  return FriendsListTile(name: name);
+                  // check if user has checked in
+                  final baseDate = friend[constants.checkInBaseDate];
+                  // List dynamicDates = friend[constants.checkInDates]; //[];
+
+                  List<Timestamp> dates = [];
+                  for (Timestamp date in friend[constants.checkInDates]) {
+                    dates.add(date);
+                  }
+
+                  final interval = friend[constants.checkInInterval];
+                  final checkedIn =
+                      checkInCalculator.isCheckedIn(baseDate, dates, interval);
+                  final DateTime checkInDeadline =
+                      checkInCalculator.deadline(baseDate, dates, interval);
+
+                  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+                  final String deadline = formatter.format(checkInDeadline);
+
+                  return FriendsListTile(
+                    name: name,
+                    trailing: Column(
+                      children: [
+                        TextButton(
+                          child: Icon(
+                            checkedIn
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                          ),
+                          onPressed: () {
+                            if (checkedIn) {
+                              // remove last check in
+                              checkInStorage.removeCheckInDate(
+                                friend.id,
+                                dates.last,
+                              );
+                            } else {
+                              checkInStorage.addCheckInDate(
+                                friend.id,
+                                DateTime.now(),
+                              );
+                            }
+                          },
+                        ),
+                        Text(deadline),
+                      ],
+                    ),
+                  );
                 },
-                itemCount: widget.friends.length,
+                itemCount: sortedFriends.length,
               ),
             ),
           ),

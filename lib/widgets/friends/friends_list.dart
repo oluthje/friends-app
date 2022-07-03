@@ -50,7 +50,7 @@ class FriendsList extends StatelessWidget {
           final name = doc[constants.name];
           final intimacy = getField(doc, constants.friendIntimacy,
               constants.Intimacies.newFriend.index);
-          final checkinInterval = getField(doc, constants.checkinInterval,
+          final checkinInterval = getField(doc, constants.checkInInterval,
               constants.checkinIntervalNames[0]);
 
           return Dismissible(

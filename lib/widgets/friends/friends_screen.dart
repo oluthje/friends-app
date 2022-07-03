@@ -31,7 +31,9 @@ class _FriendsScreen extends State<FriendsScreen> {
       constants.name: text,
       constants.userId: user.uid,
       constants.friendIntimacy: intimacy,
-      constants.checkinInterval: checkinInterval,
+      constants.checkInInterval: checkinInterval,
+      constants.checkInBaseDate: Timestamp.now(),
+      constants.checkInDates: [],
     });
     textFieldController.clear();
   }
@@ -39,10 +41,11 @@ class _FriendsScreen extends State<FriendsScreen> {
   void _editFriend(
       String id, String name, int intimacy, String checkinInterval) {
     final doc = db.collection(collectionPath).doc(id);
+
     doc.update({
       constants.name: name,
       constants.friendIntimacy: intimacy,
-      constants.checkinInterval: checkinInterval,
+      constants.checkInInterval: checkinInterval,
     }).then((value) => null);
   }
 

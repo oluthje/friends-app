@@ -28,9 +28,9 @@ class CheckInsCard extends StatelessWidget {
 
     sorted.sort((friend1, friend2) {
       final friend1Value = getCheckinImportance(constants.getField(friend1,
-          constants.checkinInterval, constants.checkinIntervalNames[0]));
+          constants.checkInInterval, constants.checkinIntervalNames[0]));
       final friend2Value = getCheckinImportance(constants.getField(friend2,
-          constants.checkinInterval, constants.checkinIntervalNames[0]));
+          constants.checkInInterval, constants.checkinIntervalNames[0]));
 
       return (friend1Value.compareTo(friend2Value));
     });
@@ -87,7 +87,7 @@ class CheckInsCard extends StatelessWidget {
             itemBuilder: (context, int index) {
               final name = sortedFriends[index][constants.name];
               final checkinInterval = constants.getField(sortedFriends[index],
-                  constants.checkinInterval, constants.checkinIntervalNames[0]);
+                  constants.checkInInterval, constants.checkinIntervalNames[0]);
 
               return FriendsListTile(
                 name: name,
