@@ -11,25 +11,6 @@ Calculates isCheckedIn:
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CheckInCalculator {
-  // finds difference in duration between two dates
-  Duration _dateDiff(DateTime date1, DateTime date2) {
-    return date1.difference(date2);
-  }
-
-  // find latest_date from dates
-  DateTime _latestDate(List<Timestamp> dates) {
-    DateTime now = DateTime.now();
-    Timestamp latest = dates[0];
-
-    for (Timestamp date in dates) {
-      if (_dateDiff(now, date.toDate()) < _dateDiff(now, latest.toDate())) {
-        latest = date;
-      }
-    }
-
-    return latest.toDate();
-  }
-
   /*
   Deadline is calculated by:
   days = ceiling(daysFromBasedate / daysInInterval) * daysInInterval
@@ -67,6 +48,51 @@ class CheckInCalculator {
         latestCheckIn == checkInDeadline;
 
     return checkedIn;
+  }
+
+  // returns formatted time until deadline, 5 days, 2 months, etc
+  String formatTimeUntilDeadline(DateTime deadline) {
+    final Duration diff = deadline.difference(DateTime.now());
+
+    if (diff.inDays != 0) {
+      int days = diff.inDays;
+      if (days < 7) {
+        return '$days Days';
+      } else if (days < 30) {
+        return '${(days / 7).floor()} Weeks';
+      } else if (days < 365) {
+        return '${(days / 30).floor()} Months';
+      } else {
+        return '${(days / 365).floor()} Years';
+      }
+    } else if (diff.inHours != 0) {
+      return '${diff.inHours} Hours';
+    } else if (diff.inMinutes != 0) {
+      return '${diff.inMinutes} Minutes';
+    } else if (diff.inSeconds != 0) {
+      return '${diff.inSeconds} Seconds';
+    }
+
+    return '${deadline.difference(DateTime.now()).inDays} Days';
+  }
+
+  // finds difference in duration between two dates
+  Duration _dateDiff(DateTime date1, DateTime date2) {
+    return date1.difference(date2);
+  }
+
+  // find latest_date from dates
+  DateTime _latestDate(List<Timestamp> dates) {
+    DateTime now = DateTime.now();
+    Timestamp latest = dates[0];
+
+    for (Timestamp date in dates) {
+      if (_dateDiff(now, date.toDate()) < _dateDiff(now, latest.toDate())) {
+        latest = date;
+      }
+    }
+
+    return latest.toDate();
   }
 }
 

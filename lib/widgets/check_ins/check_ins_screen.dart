@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:friends/check_in/check_in.dart';
 import 'package:friends/constants.dart' as constants;
 import 'package:friends/data_storage/data_storage.dart';
-import 'package:friends/widgets/friends/friends_list_tile.dart';
+import 'package:friends/widgets/check_ins/check_in_list_tile.dart';
 
 class CheckInsScreen extends StatefulWidget {
   final List<dynamic> friends;
@@ -95,7 +95,6 @@ class _CheckInsScreen extends State<CheckInsScreen> {
 
                   // check if user has checked in
                   final baseDate = friend[constants.checkInBaseDate];
-                  // List dynamicDates = friend[constants.checkInDates]; //[];
 
                   List<Timestamp> dates = [];
                   for (Timestamp date in friend[constants.checkInDates]) {
@@ -105,40 +104,29 @@ class _CheckInsScreen extends State<CheckInsScreen> {
                   final interval = friend[constants.checkInInterval];
                   final checkedIn =
                       checkInCalculator.isCheckedIn(baseDate, dates, interval);
-                  final DateTime checkInDeadline =
+                  final DateTime deadline =
                       checkInCalculator.deadline(baseDate, dates, interval);
 
-                  final DateFormat formatter = DateFormat('yyyy-MM-dd');
-                  final String deadline = formatter.format(checkInDeadline);
-
-                  return FriendsListTile(
+                  return CheckInListTile(
                     name: name,
-                    trailing: Column(
-                      children: [
-                        TextButton(
-                          child: Icon(
-                            checkedIn
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
-                          ),
-                          onPressed: () {
-                            if (checkedIn) {
-                              // remove last check in
-                              checkInStorage.removeCheckInDate(
-                                friend.id,
-                                dates.last,
-                              );
-                            } else {
-                              checkInStorage.addCheckInDate(
-                                friend.id,
-                                DateTime.now(),
-                              );
-                            }
-                          },
-                        ),
-                        Text(deadline),
-                      ],
-                    ),
+                    checkinInterval: interval,
+                    checkedIn: checkedIn,
+                    deadline: deadline,
+                    lastCheckIn: dates.isEmpty ? null : dates.last.toDate(),
+                    checkInToggle: () {
+                      if (checkedIn) {
+                        // remove last check in
+                        checkInStorage.removeCheckInDate(
+                          friend.id,
+                          dates.last,
+                        );
+                      } else {
+                        checkInStorage.addCheckInDate(
+                          friend.id,
+                          DateTime.now(),
+                        );
+                      }
+                    },
                   );
                 },
                 itemCount: sortedFriends.length,
