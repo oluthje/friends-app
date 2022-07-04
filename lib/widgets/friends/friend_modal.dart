@@ -61,9 +61,7 @@ class _FriendModal extends State<FriendModal> {
             CheckinDropdownMenu(
               checkinInterval: checkinInterval,
               onChanged: (String? newValue) {
-                setState(() {
-                  checkinInterval = newValue!;
-                });
+                checkinInterval = newValue!;
               },
             ),
           ],

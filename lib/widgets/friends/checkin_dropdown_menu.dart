@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:friends/constants.dart' as constants;
 
-class CheckinDropdownMenu extends StatelessWidget {
+class CheckinDropdownMenu extends StatefulWidget {
   final String checkinInterval;
   final Function(String?) onChanged;
 
@@ -10,6 +10,19 @@ class CheckinDropdownMenu extends StatelessWidget {
     required this.checkinInterval,
     required this.onChanged,
   }) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _CheckinDropdownMenu();
+}
+
+class _CheckinDropdownMenu extends State<CheckinDropdownMenu> {
+  late String checkinInterval;
+
+  @override
+  void initState() {
+    checkinInterval = widget.checkinInterval;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +35,12 @@ class CheckinDropdownMenu extends StatelessWidget {
           child: Text(value),
         );
       }).toList(),
-      onChanged: onChanged,
+      onChanged: (String? interval) {
+        setState(() {
+          checkinInterval = interval!;
+          widget.onChanged(interval);
+        });
+      },
     );
   }
 }
