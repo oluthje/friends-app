@@ -109,7 +109,11 @@ class _FriendsApp extends State<FriendsApp> {
 
               return Padding(
                 padding: const EdgeInsets.only(
-                    top: 8.0, left: 8.0, right: 8.0, bottom: 25.0),
+                  top: 8.0,
+                  left: 8.0,
+                  right: 8.0,
+                  bottom: 25.0,
+                ),
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[

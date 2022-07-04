@@ -72,12 +72,15 @@ class FriendsCard extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 0),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: min(4, friends.length),
+            itemCount: min(5, friends.length),
             itemBuilder: (context, int index) {
               final friend = sortedFriends[index];
               final name = friend[constants.name];
-              final checkinInterval = constants.getField(friend,
-                  constants.checkInInterval, constants.checkinIntervalNames[0]);
+              final checkinInterval = constants.getField(
+                friend,
+                constants.checkInInterval,
+                constants.checkinIntervalNames[0],
+              );
 
               return FriendsListTile(
                 name: name,

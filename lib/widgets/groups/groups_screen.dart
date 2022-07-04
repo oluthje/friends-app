@@ -1,12 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
 import 'package:friends/widgets/groups/group_list_tile.dart';
 
 import 'package:friends/widgets/modal_add_item.dart';
 import 'package:friends/widgets/item_selection.dart';
 import 'package:friends/constants.dart' as constants;
+import '../../data_storage/data_storage.dart';
 
 class GroupsScreen extends StatefulWidget {
   final List friends;
@@ -23,37 +22,8 @@ class GroupsScreen extends StatefulWidget {
 }
 
 class _GroupsScreen extends State<GroupsScreen> {
-  final db = FirebaseFirestore.instance;
-  final collectionPath = 'groups';
-  final user = FirebaseAuth.instance.currentUser!;
-  final textFieldController = TextEditingController();
+  final db = GroupsStorage();
   bool visible = true;
-
-  void _addGroup(String name, List friendIDs) {
-    db.collection(collectionPath).add({
-      constants.name: name,
-      constants.friendIds: friendIDs,
-      constants.userId: user.uid,
-      constants.favorited: false,
-    });
-    textFieldController.clear();
-  }
-
-  void _editGroup(
-      String id, String name, List selectedFriends, bool favorited) {
-    final doc = db.collection(collectionPath).doc(id);
-    doc.update({
-      constants.name: name,
-      constants.friendIds: selectedFriends,
-      constants.favorited: favorited,
-    }).then((value) => null);
-  }
-
-  void _deleteGroup(String id) {
-    final doc = db.collection(collectionPath).doc(id);
-    doc.delete().then((doc) => null,
-        onError: (e) => print("Error updating document $e"));
-  }
 
   ModalAddItem addItemModal(name, doc, selectedFriendIDs) {
     List selectedIndices = [];
@@ -76,9 +46,9 @@ class _GroupsScreen extends State<GroupsScreen> {
         }
 
         if (doc == '') {
-          _addGroup(newName, friendIDs);
+          db.addGroup(newName, friendIDs);
         } else {
-          _editGroup(doc.id, newName, friendIDs, false);
+          db.editGroup(doc.id, newName, friendIDs, false);
         }
       },
       child: ItemSelection(
@@ -145,13 +115,13 @@ class _GroupsScreen extends State<GroupsScreen> {
                       key: UniqueKey(),
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
-                        _deleteGroup(doc.id);
+                        db.deleteGroup(doc.id);
                       },
                       child: Card(
                         child: GroupListTile(
                           name: name,
                           favorited: favorited,
-                          onFavoritedToggle: () => _editGroup(
+                          onFavoritedToggle: () => db.editGroup(
                               doc.id, name, selectedFriendIDs, !favorited),
                           onTap: () => showModalBottomSheet<void>(
                             context: context,

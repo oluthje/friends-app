@@ -21,7 +21,7 @@ class CheckInsScreen extends StatefulWidget {
 }
 
 class _CheckInsScreen extends State<CheckInsScreen> {
-  final CheckInStorage checkInStorage = CheckInStorage();
+  final db = CheckInStorage();
   final CheckInCalculator checkInCalculator = CheckInCalculator();
   final textFieldController = TextEditingController();
   bool visible = true;
@@ -118,16 +118,9 @@ class _CheckInsScreen extends State<CheckInsScreen> {
                         lastCheckIn: dates.isEmpty ? null : dates.last.toDate(),
                         checkInToggle: () {
                           if (checkedIn) {
-                            // remove last check in
-                            checkInStorage.removeCheckInDate(
-                              friend.id,
-                              dates.last,
-                            );
+                            db.removeCheckInDate(friend.id, dates.last);
                           } else {
-                            checkInStorage.addCheckInDate(
-                              friend.id,
-                              DateTime.now(),
-                            );
+                            db.addCheckInDate(friend.id, DateTime.now());
                           }
                         },
                       ),
