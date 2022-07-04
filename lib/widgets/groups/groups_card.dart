@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:friends/widgets/groups/groups_screen.dart';
-import '../cards/dashboard_card.dart';
+import '../dashboard/dashboard_card.dart';
 import 'package:friends/constants.dart' as constants;
 
 import 'group_list_tile.dart';

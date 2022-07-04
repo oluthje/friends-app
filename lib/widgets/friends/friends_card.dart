@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:friends/widgets/friends/friends_list_tile.dart';
 import 'friends_screen.dart';
-import '../cards/dashboard_card.dart';
+import '../dashboard/dashboard_card.dart';
 import 'package:friends/constants.dart' as constants;
 
 class FriendsCard extends StatelessWidget {

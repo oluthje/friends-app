@@ -1,33 +1,39 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:friends/check_in/check_in.dart';
+import 'package:friends/constants.dart' as constants;
+
+import '../../data_storage/data_storage.dart';
 
 class CheckInListTile extends StatelessWidget {
-  final String name;
-  final String checkinInterval;
-  final bool checkedIn;
-  final DateTime deadline;
-  final DateTime? lastCheckIn;
-  final void Function() checkInToggle;
+  final friend;
   final void Function()? onTap;
 
   const CheckInListTile({
     Key? key,
-    required this.name,
-    required this.checkinInterval,
-    required this.checkedIn,
-    required this.checkInToggle,
-    required this.deadline,
-    this.lastCheckIn,
+    required this.friend,
     this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    CheckInCalculator calc = CheckInCalculator();
+    final db = CheckInStorage();
+    final calc = CheckInCalculator();
+    final name = friend[constants.name];
+    final baseDate = friend[constants.checkInBaseDate];
+    List<Timestamp> dates = [];
+    for (Timestamp date in friend[constants.checkInDates]) {
+      dates.add(date);
+    }
+    final lastCheckIn = dates.isEmpty ? null : dates.last.toDate();
+    final interval = friend[constants.checkInInterval];
+    final checkedIn = calc.isCheckedIn(baseDate, dates, interval);
+    final DateTime deadline = calc.deadline(baseDate, dates, interval);
+
     final String formattedTimeToDeadline =
         calc.formatTimeUntilDeadline(deadline);
     final String formattedTimeSinceLastCheckIn = lastCheckIn != null
-        ? 'Checked in ${calc.formatTimeUntilDeadline(lastCheckIn!)} ago'
+        ? 'Checked in ${calc.formatTimeUntilDeadline(lastCheckIn)} ago'
         : 'No check ins yet';
 
     return ListTile(
@@ -41,7 +47,13 @@ class CheckInListTile extends StatelessWidget {
       trailing: Column(
         children: [
           TextButton(
-            onPressed: checkInToggle,
+            onPressed: () {
+              if (checkedIn) {
+                db.removeCheckInDate(friend.id, dates.last);
+              } else {
+                db.addCheckInDate(friend.id, DateTime.now());
+              }
+            },
             style: TextButton.styleFrom(
               padding: EdgeInsets.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,

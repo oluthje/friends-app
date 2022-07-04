@@ -1,12 +1,11 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:friends/widgets/friends/friends_list_tile.dart';
 import '../check_ins/check_ins_screen.dart';
-import '../cards/dashboard_card.dart';
+import '../dashboard/dashboard_card.dart';
 import 'package:friends/constants.dart' as constants;
+
+import 'check_in_list_tile.dart';
 
 class CheckInsCard extends StatelessWidget {
   final List friends;
@@ -16,15 +15,19 @@ class CheckInsCard extends StatelessWidget {
     required this.friends,
   }) : super(key: key);
 
-  int getCheckinImportance(checkinInteral) {
-    var importance = constants.checkinIntervalNames.indexOf(checkinInteral);
+  int getCheckinImportance(checkinInterval) {
+    var importance = constants.checkinIntervalNames.indexOf(checkinInterval);
     if (importance == 0) return 100;
     return importance;
   }
 
   // Sort friends by how often their check in is.
   List sortedFriendsByCheckins() {
-    List sorted = friends;
+    List sorted = friends
+        .where((friend) =>
+            friend[constants.checkInInterval] !=
+            constants.checkinIntervalNames[0])
+        .toList();
 
     sorted.sort((friend1, friend2) {
       final friend1Value = getCheckinImportance(constants.getField(friend1,
@@ -83,15 +86,11 @@ class CheckInsCard extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 0),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: min(3, friends.length),
+            itemCount: sortedFriends.length.clamp(0, 3),
             itemBuilder: (context, int index) {
-              final name = sortedFriends[index][constants.name];
-              final checkinInterval = constants.getField(sortedFriends[index],
-                  constants.checkInInterval, constants.checkinIntervalNames[0]);
-
-              return FriendsListTile(
-                name: name,
-                checkinInterval: checkinInterval,
+              final friend = sortedFriends[index];
+              return CheckInListTile(
+                friend: friend,
               );
             },
           ),

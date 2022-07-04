@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:intl/intl.dart';
 
-import 'package:friends/check_in/check_in.dart';
 import 'package:friends/constants.dart' as constants;
 import 'package:friends/data_storage/data_storage.dart';
 import 'package:friends/widgets/check_ins/check_in_list_tile.dart';
@@ -22,7 +20,6 @@ class CheckInsScreen extends StatefulWidget {
 
 class _CheckInsScreen extends State<CheckInsScreen> {
   final db = CheckInStorage();
-  final CheckInCalculator checkInCalculator = CheckInCalculator();
   final textFieldController = TextEditingController();
   bool visible = true;
 
@@ -93,36 +90,10 @@ class _CheckInsScreen extends State<CheckInsScreen> {
                 child: ListView.builder(
                   itemBuilder: (BuildContext context, index) {
                     final friend = sortedFriends[index];
-                    final name = friend[constants.name];
-
-                    // check if user has checked in
-                    final baseDate = friend[constants.checkInBaseDate];
-
-                    List<Timestamp> dates = [];
-                    for (Timestamp date in friend[constants.checkInDates]) {
-                      dates.add(date);
-                    }
-
-                    final interval = friend[constants.checkInInterval];
-                    final checkedIn = checkInCalculator.isCheckedIn(
-                        baseDate, dates, interval);
-                    final DateTime deadline =
-                        checkInCalculator.deadline(baseDate, dates, interval);
 
                     return Card(
                       child: CheckInListTile(
-                        name: name,
-                        checkinInterval: interval,
-                        checkedIn: checkedIn,
-                        deadline: deadline,
-                        lastCheckIn: dates.isEmpty ? null : dates.last.toDate(),
-                        checkInToggle: () {
-                          if (checkedIn) {
-                            db.removeCheckInDate(friend.id, dates.last);
-                          } else {
-                            db.addCheckInDate(friend.id, DateTime.now());
-                          }
-                        },
+                        friend: friend,
                       ),
                     );
                   },
