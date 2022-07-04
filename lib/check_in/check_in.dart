@@ -52,7 +52,7 @@ class CheckInCalculator {
 
   // returns formatted time until deadline, 5 days, 2 months, etc
   String formatTimeUntilDeadline(DateTime deadline) {
-    final Duration diff = deadline.difference(DateTime.now());
+    final Duration diff = deadline.difference(DateTime.now()).abs();
 
     if (diff.inDays != 0) {
       int days = diff.inDays;

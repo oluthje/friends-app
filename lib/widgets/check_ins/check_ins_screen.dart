@@ -88,48 +88,53 @@ class _CheckInsScreen extends State<CheckInsScreen> {
               return true;
             },
             child: Expanded(
-              child: ListView.builder(
-                itemBuilder: (BuildContext context, index) {
-                  final friend = sortedFriends[index];
-                  final name = friend[constants.name];
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.builder(
+                  itemBuilder: (BuildContext context, index) {
+                    final friend = sortedFriends[index];
+                    final name = friend[constants.name];
 
-                  // check if user has checked in
-                  final baseDate = friend[constants.checkInBaseDate];
+                    // check if user has checked in
+                    final baseDate = friend[constants.checkInBaseDate];
 
-                  List<Timestamp> dates = [];
-                  for (Timestamp date in friend[constants.checkInDates]) {
-                    dates.add(date);
-                  }
+                    List<Timestamp> dates = [];
+                    for (Timestamp date in friend[constants.checkInDates]) {
+                      dates.add(date);
+                    }
 
-                  final interval = friend[constants.checkInInterval];
-                  final checkedIn =
-                      checkInCalculator.isCheckedIn(baseDate, dates, interval);
-                  final DateTime deadline =
-                      checkInCalculator.deadline(baseDate, dates, interval);
+                    final interval = friend[constants.checkInInterval];
+                    final checkedIn = checkInCalculator.isCheckedIn(
+                        baseDate, dates, interval);
+                    final DateTime deadline =
+                        checkInCalculator.deadline(baseDate, dates, interval);
 
-                  return CheckInListTile(
-                    name: name,
-                    checkinInterval: interval,
-                    checkedIn: checkedIn,
-                    deadline: deadline,
-                    lastCheckIn: dates.isEmpty ? null : dates.last.toDate(),
-                    checkInToggle: () {
-                      if (checkedIn) {
-                        // remove last check in
-                        checkInStorage.removeCheckInDate(
-                          friend.id,
-                          dates.last,
-                        );
-                      } else {
-                        checkInStorage.addCheckInDate(
-                          friend.id,
-                          DateTime.now(),
-                        );
-                      }
-                    },
-                  );
-                },
-                itemCount: sortedFriends.length,
+                    return Card(
+                      child: CheckInListTile(
+                        name: name,
+                        checkinInterval: interval,
+                        checkedIn: checkedIn,
+                        deadline: deadline,
+                        lastCheckIn: dates.isEmpty ? null : dates.last.toDate(),
+                        checkInToggle: () {
+                          if (checkedIn) {
+                            // remove last check in
+                            checkInStorage.removeCheckInDate(
+                              friend.id,
+                              dates.last,
+                            );
+                          } else {
+                            checkInStorage.addCheckInDate(
+                              friend.id,
+                              DateTime.now(),
+                            );
+                          }
+                        },
+                      ),
+                    );
+                  },
+                  itemCount: sortedFriends.length,
+                ),
               ),
             ),
           ),

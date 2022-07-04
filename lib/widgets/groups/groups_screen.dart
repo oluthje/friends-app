@@ -129,42 +129,47 @@ class _GroupsScreen extends State<GroupsScreen> {
               return true;
             },
             child: Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(top: 16.0),
-                itemCount: widget.groups.length,
-                itemBuilder: (context, index) {
-                  final doc = widget.groups[index];
-                  final String name = doc[constants.name];
-                  final bool favorited =
-                      getField(doc, constants.favorited, false);
-                  final List selectedFriendIDs = doc[constants.friendIds];
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  itemCount: widget.groups.length,
+                  itemBuilder: (context, index) {
+                    final doc = widget.groups[index];
+                    final String name = doc[constants.name];
+                    final bool favorited =
+                        getField(doc, constants.favorited, false);
+                    final List selectedFriendIDs = doc[constants.friendIds];
 
-                  return Dismissible(
-                    key: UniqueKey(),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      _deleteGroup(doc.id);
-                    },
-                    child: GroupListTile(
-                      name: name,
-                      favorited: favorited,
-                      onFavoritedToggle: () => _editGroup(
-                          doc.id, name, selectedFriendIDs, !favorited),
-                      onTap: () => showModalBottomSheet<void>(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(25.0),
+                    return Dismissible(
+                      key: UniqueKey(),
+                      direction: DismissDirection.endToStart,
+                      onDismissed: (direction) {
+                        _deleteGroup(doc.id);
+                      },
+                      child: Card(
+                        child: GroupListTile(
+                          name: name,
+                          favorited: favorited,
+                          onFavoritedToggle: () => _editGroup(
+                              doc.id, name, selectedFriendIDs, !favorited),
+                          onTap: () => showModalBottomSheet<void>(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(25.0),
+                              ),
+                            ),
+                            builder: (BuildContext context) {
+                              return addItemModal(name, doc, selectedFriendIDs);
+                            },
                           ),
                         ),
-                        builder: (BuildContext context) {
-                          return addItemModal(name, doc, selectedFriendIDs);
-                        },
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),

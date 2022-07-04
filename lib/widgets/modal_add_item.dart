@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class ModalAddItem extends StatelessWidget {
   final String name;
+  final String? title;
   final Function(String) onSubmit;
   late final TextEditingController textFieldController;
   final Widget? child;
 
   ModalAddItem({
     Key? key,
+    this.title,
     required this.name,
     required this.onSubmit,
     this.child,
@@ -37,12 +39,12 @@ class ModalAddItem extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              const Text('Todo List Name'),
+              title != null ? Text(title!) : Container(),
               TextFormField(
                 controller: textFieldController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Todo item',
+                  labelText: 'Friend name',
                 ),
                 autofocus: true,
                 onEditingComplete: () => submit(context),
