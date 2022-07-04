@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:friends/widgets/friends/friend_modal.dart';
 import 'package:provider/provider.dart';
 
 import 'package:friends/authentication/google_sign_in.dart';
@@ -11,6 +12,7 @@ import 'package:friends/widgets/dashboard/profile_button.dart';
 import 'package:friends/widgets/friends/friends_card.dart';
 import 'package:friends/widgets/groups/groups_card.dart';
 import 'package:friends/widgets/check_ins/check_ins_card.dart';
+import 'package:friends/data_storage/data_storage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +55,30 @@ class HomePage extends StatelessWidget {
           },
         ),
       );
+}
+
+void showFriendModal(BuildContext context, String name, String id, int intimacy,
+    String checkinInterval) {
+  final db = FriendsStorage();
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(25.0),
+      ),
+    ),
+    builder: (BuildContext context) {
+      return FriendModal(
+        name: name,
+        id: id,
+        intimacy: intimacy,
+        editFriend: db.editFriend,
+        addFriend: db.addFriend,
+        initCheckinInterval: checkinInterval,
+      );
+    },
+  );
 }
 
 class FriendsApp extends StatefulWidget {
@@ -117,9 +143,18 @@ class _FriendsApp extends State<FriendsApp> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      FriendsCard(friends: friendsDocs),
-                      GroupsCard(friends: friendsDocs, groups: groupsDocs),
-                      CheckInsCard(friends: friendsDocs),
+                      FriendsCard(
+                        friends: friendsDocs,
+                        showFriendModal: showFriendModal,
+                      ),
+                      GroupsCard(
+                        friends: friendsDocs,
+                        groups: groupsDocs,
+                      ),
+                      CheckInsCard(
+                        friends: friendsDocs,
+                        showFriendModal: showFriendModal,
+                      ),
                     ],
                   ),
                 ),

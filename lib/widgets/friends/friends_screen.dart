@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:friends/constants.dart' as constants;
-import 'package:friends/widgets//friends/friend_modal.dart';
 import 'package:friends/widgets/friends/friends_list.dart';
 import '../../data_storage/data_storage.dart';
 
 class FriendsScreen extends StatefulWidget {
   final List friends;
+  final Function showFriendModal;
 
   const FriendsScreen({
     Key? key,
     required this.friends,
+    required this.showFriendModal,
   }) : super(key: key);
 
   @override
@@ -30,29 +31,6 @@ class _FriendsScreen extends State<FriendsScreen> {
       );
     }
     return const Padding(padding: EdgeInsets.zero);
-  }
-
-  dynamic showFriendModal(BuildContext context, String name, String id,
-      int intimacy, String checkinInterval) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(25.0),
-        ),
-      ),
-      builder: (BuildContext context) {
-        return FriendModal(
-          name: name,
-          id: id,
-          intimacy: intimacy,
-          editFriend: db.editFriend,
-          addFriend: db.addFriend,
-          initCheckinInterval: checkinInterval,
-        );
-      },
-    );
   }
 
   @override
@@ -79,7 +57,7 @@ class _FriendsScreen extends State<FriendsScreen> {
               child: FriendsList(
                 deleteFriend: db.deleteFriend,
                 friends: widget.friends,
-                showFriendModal: showFriendModal,
+                showFriendModal: widget.showFriendModal,
               ),
             ),
           ),
@@ -91,7 +69,7 @@ class _FriendsScreen extends State<FriendsScreen> {
         transform: Matrix4.translationValues(0, visible ? 0 : 110, 0),
         child: FloatingActionButton(
           backgroundColor: Colors.blue,
-          onPressed: () => showFriendModal(
+          onPressed: () => widget.showFriendModal(
             context,
             '',
             '',

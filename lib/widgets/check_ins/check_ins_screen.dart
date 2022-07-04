@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -8,10 +7,12 @@ import 'package:friends/widgets/check_ins/check_in_list_tile.dart';
 
 class CheckInsScreen extends StatefulWidget {
   final List<dynamic> friends;
+  final Function showFriendModal;
 
   const CheckInsScreen({
     Key? key,
     required this.friends,
+    required this.showFriendModal,
   }) : super(key: key);
 
   @override
@@ -90,10 +91,20 @@ class _CheckInsScreen extends State<CheckInsScreen> {
                 child: ListView.builder(
                   itemBuilder: (BuildContext context, index) {
                     final friend = sortedFriends[index];
+                    final name = friend[constants.name];
+                    final intimacy = friend[constants.friendIntimacy];
+                    final checkInInterval = friend[constants.checkInInterval];
 
                     return Card(
                       child: CheckInListTile(
                         friend: friend,
+                        onTap: () => widget.showFriendModal(
+                          context,
+                          name,
+                          friend.id,
+                          intimacy,
+                          checkInInterval,
+                        ),
                       ),
                     );
                   },

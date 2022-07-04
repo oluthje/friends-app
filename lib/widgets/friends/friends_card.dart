@@ -10,10 +10,12 @@ import 'package:friends/constants.dart' as constants;
 
 class FriendsCard extends StatelessWidget {
   final List friends;
+  final Function showFriendModal;
 
   const FriendsCard({
     Key? key,
     required this.friends,
+    required this.showFriendModal,
   }) : super(key: key);
 
   List sortedFriendsByImportance() {
@@ -46,7 +48,10 @@ class FriendsCard extends StatelessWidget {
 
         var friendsDocs = snapshot.requireData.docs;
 
-        return FriendsScreen(friends: friendsDocs);
+        return FriendsScreen(
+          friends: friendsDocs,
+          showFriendModal: showFriendModal,
+        );
       },
     );
   }

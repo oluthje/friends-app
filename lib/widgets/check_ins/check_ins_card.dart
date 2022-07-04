@@ -9,10 +9,12 @@ import 'check_in_list_tile.dart';
 
 class CheckInsCard extends StatelessWidget {
   final List friends;
+  final Function showFriendModal;
 
   const CheckInsCard({
     Key? key,
     required this.friends,
+    required this.showFriendModal,
   }) : super(key: key);
 
   int getCheckinImportance(checkinInterval) {
@@ -60,7 +62,10 @@ class CheckInsCard extends StatelessWidget {
 
         var friendsDocs = snapshot.requireData.docs;
 
-        return CheckInsScreen(friends: friendsDocs);
+        return CheckInsScreen(
+          friends: friendsDocs,
+          showFriendModal: showFriendModal,
+        );
       },
     );
   }
@@ -91,6 +96,7 @@ class CheckInsCard extends StatelessWidget {
               final friend = sortedFriends[index];
               return CheckInListTile(
                 friend: friend,
+                onTap: () => showFriendModal,
               );
             },
           ),
