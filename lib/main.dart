@@ -58,7 +58,7 @@ class HomePage extends StatelessWidget {
 }
 
 void showFriendModal(BuildContext context, String name, String id, int intimacy,
-    String checkinInterval) {
+    String checkinInterval, List groups) {
   final db = FriendsStorage();
   showModalBottomSheet<void>(
     context: context,
@@ -76,6 +76,7 @@ void showFriendModal(BuildContext context, String name, String id, int intimacy,
         editFriend: db.editFriend,
         addFriend: db.addFriend,
         initCheckinInterval: checkinInterval,
+        groups: groups,
       );
     },
   );
@@ -145,6 +146,7 @@ class _FriendsApp extends State<FriendsApp> {
                     children: <Widget>[
                       FriendsCard(
                         friends: friendsDocs,
+                        groups: groupsDocs,
                         showFriendModal: showFriendModal,
                       ),
                       GroupsCard(
@@ -153,6 +155,7 @@ class _FriendsApp extends State<FriendsApp> {
                       ),
                       CheckInsCard(
                         friends: friendsDocs,
+                        groups: groupsDocs,
                         showFriendModal: showFriendModal,
                       ),
                     ],

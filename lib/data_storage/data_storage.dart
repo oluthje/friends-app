@@ -14,26 +14,38 @@ class DataStorage {
 class FriendsStorage extends DataStorage {
   final collectionPath = 'friends';
 
-  void addFriend(String text, int intimacy, String checkinInterval) {
+  void addFriend(String name, int intimacy, String interval, List groupIds) {
     db.collection(collectionPath).add({
-      constants.name: text,
+      constants.name: name,
       constants.userId: user.uid,
       constants.friendIntimacy: intimacy,
-      constants.checkInInterval: checkinInterval,
+      constants.checkInInterval: interval,
       constants.checkInBaseDate: Timestamp.now(),
       constants.checkInDates: [],
     });
   }
 
-  void editFriend(
-      String id, String name, int intimacy, String checkinInterval) {
+  void editFriend(String id, String name, int intimacy, String interval,
+      List selectedGroupIds, List groups) {
     final doc = db.collection(collectionPath).doc(id);
 
     doc.update({
       constants.name: name,
       constants.friendIntimacy: intimacy,
-      constants.checkInInterval: checkinInterval,
+      constants.checkInInterval: interval,
     }).then((value) => null);
+
+    final groupsDb = GroupsStorage();
+    for (dynamic group in groups) {
+      String groupId = group.id;
+      // if groupId in selectedGroupIds, then add friend to group
+      // else remove friend from group
+      if (selectedGroupIds.contains(groupId)) {
+        groupsDb.addFriendToGroup(groupId, id);
+      } else {
+        groupsDb.removeFriendFromGroup(groupId, id);
+      }
+    }
   }
 
   void deleteFriend(String id) {
@@ -60,6 +72,22 @@ class GroupsStorage extends DataStorage {
       constants.name: name,
       constants.friendIds: selectedFriends,
       constants.favorited: favorited,
+    }).then((value) => null);
+  }
+
+  // add friend if possible
+  void addFriendToGroup(String groupId, String friendId) {
+    final doc = db.collection(collectionPath).doc(groupId);
+    doc.update({
+      constants.friendIds: FieldValue.arrayUnion([friendId]),
+    }).then((value) => null);
+  }
+
+  // remove friend if possible
+  void removeFriendFromGroup(String groupId, String friendId) {
+    final doc = db.collection(collectionPath).doc(groupId);
+    doc.update({
+      constants.friendIds: FieldValue.arrayRemove([friendId]),
     }).then((value) => null);
   }
 

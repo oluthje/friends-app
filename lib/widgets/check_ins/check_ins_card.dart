@@ -9,11 +9,13 @@ import 'check_in_list_tile.dart';
 
 class CheckInsCard extends StatelessWidget {
   final List friends;
+  final List groups;
   final Function showFriendModal;
 
   const CheckInsCard({
     Key? key,
     required this.friends,
+    required this.groups,
     required this.showFriendModal,
   }) : super(key: key);
 

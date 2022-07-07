@@ -10,11 +10,13 @@ import 'package:friends/constants.dart' as constants;
 
 class FriendsCard extends StatelessWidget {
   final List friends;
+  final List groups;
   final Function showFriendModal;
 
   const FriendsCard({
     Key? key,
     required this.friends,
+    required this.groups,
     required this.showFriendModal,
   }) : super(key: key);
 
@@ -35,22 +37,35 @@ class FriendsCard extends StatelessWidget {
         .collection(constants.friends)
         .where(constants.userId, isEqualTo: user.uid)
         .snapshots();
+    final Stream<QuerySnapshot> groupsSnapshots = FirebaseFirestore.instance
+        .collection(constants.groups)
+        .where(constants.userId, isEqualTo: user.uid)
+        .snapshots();
 
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot>(
       stream: friendsSnapshots,
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Waiting on data');
-        }
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot1) {
+        return StreamBuilder<QuerySnapshot>(
+          stream: groupsSnapshots,
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
+            if (snapshot1.hasError || snapshot2.hasError) {
+              return Text('Error: ${snapshot1.error}. ${snapshot2.error}');
+            }
+            if (snapshot1.connectionState == ConnectionState.waiting ||
+                snapshot2.connectionState == ConnectionState.waiting) {
+              return const Text('Data is loading');
+            }
 
-        var friendsDocs = snapshot.requireData.docs;
+            var friendsDocs = snapshot1.requireData.docs;
+            var groupsDocs = snapshot2.requireData.docs;
 
-        return FriendsScreen(
-          friends: friendsDocs,
-          showFriendModal: showFriendModal,
+            return FriendsScreen(
+              friends: friendsDocs,
+              groups: groupsDocs,
+              showFriendModal: showFriendModal,
+            );
+          },
         );
       },
     );

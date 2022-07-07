@@ -6,12 +6,14 @@ import 'package:friends/constants.dart' as constants;
 
 class FriendsList extends StatelessWidget {
   final List friends;
+  final List groups;
   final Function deleteFriend;
   final Function showFriendModal;
 
   const FriendsList({
     Key? key,
     required this.friends,
+    required this.groups,
     required this.deleteFriend,
     required this.showFriendModal,
   }) : super(key: key);
@@ -69,6 +71,7 @@ class FriendsList extends StatelessWidget {
                   doc.id,
                   intimacy,
                   checkinInterval,
+                  groups,
                 ),
               ),
             ),
