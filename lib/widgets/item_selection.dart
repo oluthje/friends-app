@@ -5,10 +5,12 @@ class ItemSelection extends StatefulWidget {
   final List selectedItems;
   final double spacing;
   final Function onUpdated;
+  final BorderRadius borderRadius;
 
   const ItemSelection({
     Key? key,
     this.spacing = 8,
+    required this.borderRadius,
     required this.items,
     required this.selectedItems,
     required this.onUpdated,
@@ -19,10 +21,8 @@ class ItemSelection extends StatefulWidget {
 }
 
 class _ItemSelection extends State<ItemSelection> {
-
   @override
   Widget build(BuildContext context) {
-
     final selectedStyle = ElevatedButton.styleFrom(
       // Foreground color
       onPrimary: Colors.blue,
@@ -30,7 +30,7 @@ class _ItemSelection extends State<ItemSelection> {
       primary: Colors.white,
 
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18.0),
+        borderRadius: widget.borderRadius,
         side: const BorderSide(color: Colors.blue),
       ),
     );
@@ -41,7 +41,7 @@ class _ItemSelection extends State<ItemSelection> {
       // Background color
       primary: Colors.blue,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18.0),
+        borderRadius: widget.borderRadius,
       ),
     );
 
@@ -65,12 +65,13 @@ class _ItemSelection extends State<ItemSelection> {
       children: [
         for (var i = 0; i < widget.items.length; i++)
           TextButton(
-            onPressed: () {
-              toggleSelected(i);
-            },
-            style: widget.selectedItems.contains(i) ? unselectedStyle : selectedStyle,
-            child: Text(widget.items[i]['name'])
-          )
+              onPressed: () {
+                toggleSelected(i);
+              },
+              style: widget.selectedItems.contains(i)
+                  ? unselectedStyle
+                  : selectedStyle,
+              child: Text(widget.items[i]['name']))
       ],
     );
   }

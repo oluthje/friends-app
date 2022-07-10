@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'form_title.dart';
 
 class ModalAddItem extends StatefulWidget {
   final String name;
@@ -47,15 +48,17 @@ class _ModalAddItem extends State<ModalAddItem> {
             bottom: bottomPadding,
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              widget.title != null ? Text(widget.title!) : Container(),
+              FormTitle(
+                text: widget.title!,
+              ),
               TextFormField(
                 initialValue: _name,
                 decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Friend name',
-                ),
+                    // border: OutlineInputBorder(),
+                    // labelText: 'Friend name',
+                    ),
                 autofocus: true,
                 onEditingComplete: () => _submit(context),
                 onChanged: (name) => setState(() {
@@ -66,12 +69,12 @@ class _ModalAddItem extends State<ModalAddItem> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(
+                  ElevatedButton(
                     child: const Text('Cancel'),
                     onPressed: () => Navigator.pop(context),
                   ),
                   const SizedBox(width: 5),
-                  TextButton(
+                  ElevatedButton(
                     child: const Text('Submit'),
                     onPressed: () => _submit(context),
                   ),

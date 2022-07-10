@@ -4,11 +4,13 @@ import 'package:friends/constants.dart' as constants;
 class IntimacySelection extends StatefulWidget {
   final int intimacy;
   final Function onChange;
+  final Color color;
 
   const IntimacySelection({
     Key? key,
     required this.intimacy,
-    required this.onChange
+    required this.onChange,
+    required this.color,
   }) : super(key: key);
 
   @override
@@ -36,8 +38,13 @@ class _IntimacySelection extends State<IntimacySelection> {
 
     return ToggleButtons(
       isSelected: isSelected,
-      renderBorder: false,
-      borderRadius: BorderRadius.circular(30.0),
+      renderBorder: true,
+      borderRadius: BorderRadius.circular(5.0),
+      borderColor: widget.color,
+      selectedColor: Colors.white,
+      selectedBorderColor: widget.color,
+      fillColor: widget.color,
+      color: widget.color,
       children: const [
         Text('Good'),
         Text('Rising'),
@@ -49,7 +56,9 @@ class _IntimacySelection extends State<IntimacySelection> {
           intimacy = index;
           widget.onChange(index);
 
-          for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
+          for (int buttonIndex = 0;
+              buttonIndex < isSelected.length;
+              buttonIndex++) {
             if (buttonIndex == index) {
               isSelected[buttonIndex] = true;
             } else {

@@ -57,6 +57,7 @@ class _GroupsScreen extends State<GroupsScreen> {
         onUpdated: (items) {
           selectedIndices = items;
         },
+        borderRadius: BorderRadius.circular(5.0),
       ),
     );
   }
