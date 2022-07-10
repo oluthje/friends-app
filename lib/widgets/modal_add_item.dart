@@ -1,25 +1,35 @@
 import 'package:flutter/material.dart';
 
-class ModalAddItem extends StatelessWidget {
+class ModalAddItem extends StatefulWidget {
   final String name;
   final String? title;
   final Function(String) onSubmit;
-  late final TextEditingController textFieldController;
   final Widget? child;
 
-  ModalAddItem({
+  const ModalAddItem({
     Key? key,
     this.title,
     required this.name,
     required this.onSubmit,
     this.child,
-  }) : super(key: key) {
-    textFieldController = TextEditingController(text: name);
+  }) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _ModalAddItem();
+}
+
+class _ModalAddItem extends State<ModalAddItem> {
+  late String _name;
+
+  void _submit(context) {
+    widget.onSubmit(_name);
+    Navigator.pop(context);
   }
 
-  void submit(context) {
-    onSubmit(textFieldController.text);
-    Navigator.pop(context);
+  @override
+  void initState() {
+    super.initState();
+    _name = widget.name;
   }
 
   @override
@@ -39,17 +49,20 @@ class ModalAddItem extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              title != null ? Text(title!) : Container(),
+              widget.title != null ? Text(widget.title!) : Container(),
               TextFormField(
-                controller: textFieldController,
+                initialValue: _name,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Friend name',
                 ),
                 autofocus: true,
-                onEditingComplete: () => submit(context),
+                onEditingComplete: () => _submit(context),
+                onChanged: (name) => setState(() {
+                  _name = name;
+                }),
               ),
-              child ?? Container(),
+              widget.child ?? Container(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -60,7 +73,7 @@ class ModalAddItem extends StatelessWidget {
                   const SizedBox(width: 5),
                   TextButton(
                     child: const Text('Submit'),
-                    onPressed: () => submit(context),
+                    onPressed: () => _submit(context),
                   ),
                 ],
               ),
