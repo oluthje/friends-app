@@ -167,7 +167,7 @@ class _GroupsScreen extends State<GroupsScreen> {
                 },
               );
             },
-            backgroundColor: Colors.blue,
+            backgroundColor: Theme.of(context).primaryColor,
             child: const Icon(Icons.add),
           ),
         ),

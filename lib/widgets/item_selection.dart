@@ -25,13 +25,13 @@ class _ItemSelection extends State<ItemSelection> {
   Widget build(BuildContext context) {
     final selectedStyle = ElevatedButton.styleFrom(
       // Foreground color
-      onPrimary: Colors.blue,
+      onPrimary: Theme.of(context).primaryColor,
       // Background color
       primary: Colors.white,
 
       shape: RoundedRectangleBorder(
         borderRadius: widget.borderRadius,
-        side: const BorderSide(color: Colors.blue),
+        side: BorderSide(color: Theme.of(context).primaryColor),
       ),
     );
 
@@ -39,7 +39,7 @@ class _ItemSelection extends State<ItemSelection> {
       // Foreground color
       onPrimary: Colors.white,
       // Background color
-      primary: Colors.blue,
+      primary: Theme.of(context).primaryColor,
       shape: RoundedRectangleBorder(
         borderRadius: widget.borderRadius,
       ),

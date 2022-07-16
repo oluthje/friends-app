@@ -71,7 +71,6 @@ class _FriendsScreen extends State<FriendsScreen> {
         curve: Curves.fastOutSlowIn,
         transform: Matrix4.translationValues(0, visible ? 0 : 110, 0),
         child: FloatingActionButton(
-          backgroundColor: Colors.blue,
           onPressed: () => widget.showFriendModal(
             context,
             '',

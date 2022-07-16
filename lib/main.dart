@@ -27,9 +27,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
         create: (context) => GoogleSignInProvider(),
-        child: const MaterialApp(
+        child: MaterialApp(
           title: 'Sign in App!',
-          home: HomePage(),
+          theme: ThemeData(
+            primarySwatch: Colors.orange,
+          ),
+          home: const HomePage(),
         ),
       );
 }

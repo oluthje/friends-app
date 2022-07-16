@@ -38,6 +38,12 @@ class _ModalAddItem extends State<ModalAddItem> {
     final keyboardSize = MediaQuery.of(context).viewInsets.bottom;
     final double bottomPadding = keyboardSize < 25 ? 25 : keyboardSize;
 
+    final formTitle = widget.title != null
+        ? FormTitle(
+            text: widget.title!,
+          )
+        : Container();
+
     return Wrap(
       children: [
         Padding(
@@ -50,9 +56,7 @@ class _ModalAddItem extends State<ModalAddItem> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              FormTitle(
-                text: widget.title!,
-              ),
+              formTitle,
               TextFormField(
                 initialValue: _name,
                 decoration: const InputDecoration(
