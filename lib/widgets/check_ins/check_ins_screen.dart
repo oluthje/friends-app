@@ -8,11 +8,13 @@ import 'package:friends/widgets/check_ins/check_in_list_tile.dart';
 class CheckInsScreen extends StatefulWidget {
   final List<dynamic> friends;
   final Function showFriendModal;
+  final dynamic groups;
 
   const CheckInsScreen({
     Key? key,
     required this.friends,
     required this.showFriendModal,
+    required this.groups,
   }) : super(key: key);
 
   @override
@@ -104,6 +106,7 @@ class _CheckInsScreen extends State<CheckInsScreen> {
                           friend.id,
                           intimacy,
                           checkInInterval,
+                          widget.groups,
                         ),
                       ),
                     );

@@ -67,6 +67,7 @@ class CheckInsCard extends StatelessWidget {
         return CheckInsScreen(
           friends: friendsDocs,
           showFriendModal: showFriendModal,
+          groups: groups,
         );
       },
     );

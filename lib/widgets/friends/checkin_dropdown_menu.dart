@@ -16,19 +16,15 @@ class CheckinDropdownMenu extends StatefulWidget {
 }
 
 class _CheckinDropdownMenu extends State<CheckinDropdownMenu> {
-  late String checkinInterval;
-
-  @override
-  void initState() {
-    checkinInterval = widget.checkinInterval;
-    super.initState();
-  }
+  late String _checkinInterval = widget.checkinInterval;
 
   @override
   Widget build(BuildContext context) {
     List<String> names = constants.checkinIntervalNames;
+
     return DropdownButton(
-      value: checkinInterval,
+      value: _checkinInterval,
+      hint: const Text('Select Check In Interval'),
       items: names.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -37,7 +33,7 @@ class _CheckinDropdownMenu extends State<CheckinDropdownMenu> {
       }).toList(),
       onChanged: (String? interval) {
         setState(() {
-          checkinInterval = interval!;
+          _checkinInterval = interval!;
           widget.onChanged(interval);
         });
       },

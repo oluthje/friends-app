@@ -58,7 +58,7 @@ class _FriendModal extends State<FriendModal> {
   Widget build(BuildContext context) {
     return ModalAddItem(
       name: widget.name ?? '',
-      title: 'Add Friend',
+      title: widget.name != null ? 'Edit Friend' : 'Add Friend',
       onSubmit: (newName) {
         // convert group indices to group ids
         List selectedGroupIds = [];
@@ -96,7 +96,6 @@ class _FriendModal extends State<FriendModal> {
                 intimacy = newIntimacy;
               },
             ),
-            // const FormTitle(text: 'Check In'),
             CheckinDropdownMenu(
               checkinInterval: checkinInterval,
               onChanged: (String? newValue) {
