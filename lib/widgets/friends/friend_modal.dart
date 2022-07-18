@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:friends/constants.dart' as constants;
-import 'package:friends/widgets/form_title.dart';
 import 'package:friends/widgets/item_selection.dart';
 
 import 'package:friends/widgets/modal_add_item.dart';
@@ -58,7 +57,7 @@ class _FriendModal extends State<FriendModal> {
   Widget build(BuildContext context) {
     return ModalAddItem(
       name: widget.name ?? '',
-      title: widget.name != null ? 'Edit Friend' : 'Add Friend',
+      title: widget.name!.isEmpty ? 'Add Friend' : 'Edit Friend',
       onSubmit: (newName) {
         // convert group indices to group ids
         List selectedGroupIds = [];
@@ -78,7 +77,6 @@ class _FriendModal extends State<FriendModal> {
         padding: const EdgeInsets.only(top: 0.0),
         child: Column(
           children: [
-            // const FormTitle(text: 'Groups'),
             ItemSelection(
               items: widget.groups,
               selectedItems: selectedGroupIndices,

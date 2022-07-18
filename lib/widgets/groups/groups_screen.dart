@@ -37,6 +37,7 @@ class _GroupsScreen extends State<GroupsScreen> {
 
     return ModalAddItem(
       name: name,
+      title: name!.isEmpty ? 'Add Group' : 'Edit Group',
       onSubmit: (newName) {
         // convert item indices into list of friend IDs
         List friendIDs = [];
