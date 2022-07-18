@@ -64,10 +64,7 @@ class _ModalAddItem extends State<ModalAddItem> {
                 formTitle,
                 TextFormField(
                   initialValue: _name,
-                  decoration: const InputDecoration(
-                      // border: OutlineInputBorder(),
-                      // labelText: 'Friend name',
-                      ),
+                  textCapitalization: TextCapitalization.sentences,
                   autofocus: true,
                   onEditingComplete: () => _trySubmit(context),
                   onChanged: (name) => setState(() {
@@ -75,10 +72,13 @@ class _ModalAddItem extends State<ModalAddItem> {
                   }),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a complete name';
+                      return 'Enter a complete name';
                     }
                     return null;
                   },
+                  decoration: const InputDecoration(
+                    labelText: 'Name',
+                  ),
                 ),
                 widget.child ?? Container(),
                 Row(
