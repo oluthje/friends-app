@@ -21,7 +21,7 @@ enum Intimacies { good, rising, newFriend, acquaintance }
 
 const Map<String, String> intimacyNames = {
   '0': 'Good',
-  '1': 'Rising',
+  '1': 'Moderate',
   '2': 'New',
   '3': 'Acquainted',
 };

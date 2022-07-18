@@ -18,10 +18,6 @@ class FriendsList extends StatelessWidget {
     required this.showFriendModal,
   }) : super(key: key);
 
-  dynamic getField(doc, field, defualt) {
-    return doc.data().toString().contains(field) ? doc.get(field) : defualt;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -29,7 +25,7 @@ class FriendsList extends StatelessWidget {
       child: GroupedListView<dynamic, String>(
         elements: friends,
         groupBy: (element) {
-          int intimacy = getField(element, constants.friendIntimacy,
+          int intimacy = constants.getField(element, constants.friendIntimacy,
               constants.Intimacies.newFriend.index);
           return constants.Intimacies.values[intimacy].index.toString();
         },
@@ -48,31 +44,33 @@ class FriendsList extends StatelessWidget {
           );
         },
         itemBuilder: (context, dynamic element) {
-          final DocumentSnapshot doc = element;
-          final name = doc[constants.name];
-          final intimacy = getField(doc, constants.friendIntimacy,
+          final DocumentSnapshot friend = element;
+          final name = friend[constants.name];
+          final intimacy = constants.getField(friend, constants.friendIntimacy,
               constants.Intimacies.newFriend.index);
-          final checkinInterval = getField(doc, constants.checkInInterval,
-              constants.checkinIntervalNames[0]);
+          final checkinInterval = constants.getField(friend,
+              constants.checkInInterval, constants.checkinIntervalNames[0]);
 
           return Dismissible(
             key: UniqueKey(),
             direction: DismissDirection.endToStart,
             onDismissed: (direction) {
-              deleteFriend(doc.id);
+              deleteFriend(friend.id);
             },
             child: Card(
               child: FriendsListTile(
                 name: name,
+                id: friend.id,
                 checkinInterval: checkinInterval,
                 onTap: () => showFriendModal(
                   context,
                   name,
-                  doc.id,
+                  friend.id,
                   intimacy,
                   checkinInterval,
                   groups,
                 ),
+                groups: groups,
               ),
             ),
           );

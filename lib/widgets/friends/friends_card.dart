@@ -104,7 +104,9 @@ class FriendsCard extends StatelessWidget {
 
               return FriendsListTile(
                 name: name,
+                id: friend.id,
                 checkinInterval: checkinInterval,
+                groups: groups,
               );
             },
           ),

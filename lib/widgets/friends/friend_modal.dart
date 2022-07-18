@@ -77,7 +77,6 @@ class _FriendModal extends State<FriendModal> {
       child: Padding(
         padding: const EdgeInsets.only(top: 0.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // const FormTitle(text: 'Groups'),
             ItemSelection(
@@ -88,7 +87,6 @@ class _FriendModal extends State<FriendModal> {
               },
               borderRadius: BorderRadius.circular(25.0),
             ),
-            // const FormTitle(text: 'Intimacy'),
             IntimacySelection(
               intimacy: intimacy,
               color: Colors.blue,

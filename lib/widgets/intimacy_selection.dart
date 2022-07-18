@@ -46,7 +46,7 @@ class _IntimacySelection extends State<IntimacySelection> {
       // fillColor: Theme.of(context).primaryColor,
       children: const [
         Text('Good'),
-        Text('Rising'),
+        Text('Moderate'),
         Text('New'),
         Text('Acquaintance'),
       ],
