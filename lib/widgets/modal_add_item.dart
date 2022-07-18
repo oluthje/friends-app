@@ -20,11 +20,14 @@ class ModalAddItem extends StatefulWidget {
 }
 
 class _ModalAddItem extends State<ModalAddItem> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late String _name;
 
-  void _submit(context) {
-    widget.onSubmit(_name);
-    Navigator.pop(context);
+  void _trySubmit(context) {
+    if (_formKey.currentState!.validate()) {
+      widget.onSubmit(_name);
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -53,38 +56,47 @@ class _ModalAddItem extends State<ModalAddItem> {
             top: 25.0,
             bottom: bottomPadding,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              formTitle,
-              TextFormField(
-                initialValue: _name,
-                decoration: const InputDecoration(
-                    // border: OutlineInputBorder(),
-                    // labelText: 'Friend name',
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                formTitle,
+                TextFormField(
+                  initialValue: _name,
+                  decoration: const InputDecoration(
+                      // border: OutlineInputBorder(),
+                      // labelText: 'Friend name',
+                      ),
+                  autofocus: true,
+                  onEditingComplete: () => _trySubmit(context),
+                  onChanged: (name) => setState(() {
+                    _name = name;
+                  }),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a complete name';
+                    }
+                    return null;
+                  },
+                ),
+                widget.child ?? Container(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      child: const Text('Cancel'),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                autofocus: true,
-                onEditingComplete: () => _submit(context),
-                onChanged: (name) => setState(() {
-                  _name = name;
-                }),
-              ),
-              widget.child ?? Container(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    child: const Text('Cancel'),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  const SizedBox(width: 5),
-                  ElevatedButton(
-                    child: const Text('Submit'),
-                    onPressed: () => _submit(context),
-                  ),
-                ],
-              ),
-            ],
+                    const SizedBox(width: 5),
+                    ElevatedButton(
+                      child: const Text('Submit'),
+                      onPressed: () => _trySubmit(context),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ],
