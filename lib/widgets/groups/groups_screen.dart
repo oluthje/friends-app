@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:friends/data_managers/groups_manager.dart';
 import 'package:friends/widgets/groups/group_list_tile.dart';
 
 import 'package:friends/widgets/modal_add_item.dart';
 import 'package:friends/widgets/item_selection.dart';
 import 'package:friends/constants.dart' as constants;
-import '../../data_storage/data_storage.dart';
 
 class GroupsScreen extends StatefulWidget {
   final List friends;
@@ -22,7 +22,7 @@ class GroupsScreen extends StatefulWidget {
 }
 
 class _GroupsScreen extends State<GroupsScreen> {
-  final db = GroupsStorage();
+  final db = GroupsManager();
   bool visible = true;
 
   ModalAddItem addItemModal(name, doc, selectedFriendIDs) {

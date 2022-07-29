@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:friends/constants.dart' as constants;
-import 'package:friends/data_storage/data_storage.dart';
+import 'package:friends/data_managers/check_in_manager.dart';
 import 'package:friends/widgets/check_ins/check_in_list_tile.dart';
 
 class CheckInsScreen extends StatefulWidget {
@@ -22,7 +22,7 @@ class CheckInsScreen extends StatefulWidget {
 }
 
 class _CheckInsScreen extends State<CheckInsScreen> {
-  final db = CheckInStorage();
+  final db = CheckInManager();
   final textFieldController = TextEditingController();
   bool visible = true;
 

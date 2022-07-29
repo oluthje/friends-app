@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-
 import 'package:friends/constants.dart' as constants;
 import 'package:friends/widgets/friends/friends_list.dart';
-import '../../data_storage/data_storage.dart';
 
 class FriendsScreen extends StatefulWidget {
   final List friends;
@@ -22,7 +20,6 @@ class FriendsScreen extends StatefulWidget {
 }
 
 class _FriendsScreen extends State<FriendsScreen> {
-  final db = FriendsStorage();
   bool visible = true;
 
   dynamic noFriendsWarning(noFriends) {
@@ -57,7 +54,6 @@ class _FriendsScreen extends State<FriendsScreen> {
             },
             child: Expanded(
               child: FriendsList(
-                deleteFriend: db.deleteFriend,
                 friends: widget.friends,
                 groups: widget.groups,
                 showFriendModal: widget.showFriendModal,

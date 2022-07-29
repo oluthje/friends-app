@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:friends/data_managers/friends_manager.dart';
 import 'package:friends/widgets/friends/friends_list_tile.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:friends/constants.dart' as constants;
@@ -7,14 +8,12 @@ import 'package:friends/constants.dart' as constants;
 class FriendsList extends StatelessWidget {
   final List friends;
   final List groups;
-  final Function deleteFriend;
   final Function showFriendModal;
 
   const FriendsList({
     Key? key,
     required this.friends,
     required this.groups,
-    required this.deleteFriend,
     required this.showFriendModal,
   }) : super(key: key);
 
@@ -55,7 +54,7 @@ class FriendsList extends StatelessWidget {
             key: UniqueKey(),
             direction: DismissDirection.endToStart,
             onDismissed: (direction) {
-              deleteFriend(friend.id);
+              FriendsManager().deleteFriend(friend.id);
             },
             child: Card(
               child: FriendsListTile(

@@ -2,11 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:friends/check_in/check_in.dart';
 import 'package:friends/constants.dart' as constants;
-
-import '../../data_storage/data_storage.dart';
+import 'package:friends/data_managers/check_in_manager.dart';
 
 class CheckInListTile extends StatelessWidget {
-  final friend;
+  final dynamic friend;
   final void Function()? onTap;
 
   const CheckInListTile({
@@ -17,7 +16,7 @@ class CheckInListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final db = CheckInStorage();
+    final db = CheckInManager();
     final calc = CheckInCalculator();
     final name = friend[constants.name];
     final baseDate = friend[constants.checkInBaseDate];

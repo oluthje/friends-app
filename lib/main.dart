@@ -12,7 +12,6 @@ import 'package:friends/widgets/dashboard/profile_button.dart';
 import 'package:friends/widgets/friends/friends_card.dart';
 import 'package:friends/widgets/groups/groups_card.dart';
 import 'package:friends/widgets/check_ins/check_ins_card.dart';
-import 'package:friends/data_storage/data_storage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,7 +61,6 @@ class HomePage extends StatelessWidget {
 
 void showFriendModal(BuildContext context, String name, String id, int intimacy,
     String checkinInterval, List groups) {
-  final db = FriendsStorage();
   showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -76,8 +74,6 @@ void showFriendModal(BuildContext context, String name, String id, int intimacy,
         name: name,
         id: id,
         intimacy: intimacy,
-        editFriend: db.editFriend,
-        addFriend: db.addFriend,
         initCheckinInterval: checkinInterval,
         groups: groups,
       );
@@ -131,7 +127,7 @@ class _FriendsApp extends State<FriendsApp> {
               }
               if (snapshot1.connectionState == ConnectionState.waiting ||
                   snapshot2.connectionState == ConnectionState.waiting) {
-                return const Text('Data is loading');
+                return const Center(child: CircularProgressIndicator());
               }
 
               final friendsDocs = snapshot1.requireData.docs;

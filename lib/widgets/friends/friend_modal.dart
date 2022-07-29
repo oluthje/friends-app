@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:friends/constants.dart' as constants;
+import 'package:friends/data_managers/friends_manager.dart';
 import 'package:friends/widgets/item_selection.dart';
 
 import 'package:friends/widgets/modal_add_item.dart';
@@ -9,8 +10,6 @@ import 'package:friends/widgets/friends/checkin_dropdown_menu.dart';
 class FriendModal extends StatefulWidget {
   final String? name;
   final String? id;
-  final Function addFriend;
-  final Function editFriend;
   final int intimacy;
   final String initCheckinInterval;
   final List groups;
@@ -20,8 +19,6 @@ class FriendModal extends StatefulWidget {
     this.name,
     this.id,
     required this.intimacy,
-    required this.addFriend,
-    required this.editFriend,
     required this.initCheckinInterval,
     required this.groups,
   }) : super(key: key);
@@ -55,6 +52,8 @@ class _FriendModal extends State<FriendModal> {
 
   @override
   Widget build(BuildContext context) {
+    final manager = FriendsManager();
+
     return ModalAddItem(
       name: widget.name ?? '',
       title: widget.name!.isEmpty ? 'Add Friend' : 'Edit Friend',
@@ -65,11 +64,11 @@ class _FriendModal extends State<FriendModal> {
           selectedGroupIds.add(widget.groups[index].id);
         }
 
-        if (widget.id == '') {
-          widget.addFriend(newName, intimacy, checkinInterval, selectedGroupIds,
-              widget.groups);
+        if (widget.id == '' || widget.id == null) {
+          manager.addFriend(newName, intimacy, checkinInterval,
+              selectedGroupIds, widget.groups);
         } else {
-          widget.editFriend(widget.id, newName, intimacy, checkinInterval,
+          manager.editFriend(widget.id!, newName, intimacy, checkinInterval,
               selectedGroupIds, widget.groups);
         }
       },
