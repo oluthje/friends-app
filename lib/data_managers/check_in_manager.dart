@@ -6,6 +6,7 @@ class CheckInManager extends DataManager {
   final collectionPath = 'friends';
 
   void addCheckInDate(String friendId, DateTime date) {
+    return;
     final doc = db.collection(collectionPath).doc(friendId);
     doc.update({
       constants.checkInDates: FieldValue.arrayUnion([date]),
@@ -13,6 +14,7 @@ class CheckInManager extends DataManager {
   }
 
   void removeCheckInDate(String friendId, Timestamp date) {
+    return;
     final doc = db.collection(collectionPath).doc(friendId);
     doc.update({
       constants.checkInDates: FieldValue.arrayRemove([date]),

@@ -30,7 +30,7 @@ class _GroupsScreen extends State<GroupsScreen> {
 
     // get the indices of all selected friends
     for (int i = 0; i < widget.friends.length; i++) {
-      if (selectedFriendIDs.contains(widget.friends[i].id)) {
+      if (selectedFriendIDs.contains(widget.friends[i]['id'])) {
         selectedIndices.add(i);
       }
     }
@@ -43,13 +43,13 @@ class _GroupsScreen extends State<GroupsScreen> {
         List friendIDs = [];
         for (int i = 0; i < selectedIndices.length; i++) {
           final selectedIndex = selectedIndices[i];
-          friendIDs.add(widget.friends[selectedIndex].id);
+          friendIDs.add(widget.friends[selectedIndex]['id']);
         }
 
         if (doc == '') {
           db.addGroup(newName, friendIDs);
         } else {
-          db.editGroup(doc.id, newName, friendIDs, false);
+          db.editGroup(doc['id'], newName, friendIDs, false);
         }
       },
       child: ItemSelection(
@@ -76,10 +76,6 @@ class _GroupsScreen extends State<GroupsScreen> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    dynamic getField(doc, field, defualt) {
-      return doc.data().toString().contains(field) ? doc.get(field) : defualt;
-    }
-
     return Scaffold(
       appBar: AppBar(title: const Text('Groups')),
       body: Column(
@@ -109,22 +105,21 @@ class _GroupsScreen extends State<GroupsScreen> {
                   itemBuilder: (context, index) {
                     final doc = widget.groups[index];
                     final String name = doc[constants.name];
-                    final bool favorited =
-                        getField(doc, constants.favorited, false);
+                    final bool favorited = doc[constants.favorited];
                     final List selectedFriendIDs = doc[constants.friendIds];
 
                     return Dismissible(
                       key: UniqueKey(),
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
-                        db.deleteGroup(doc.id);
+                        db.deleteGroup(doc['id']);
                       },
                       child: Card(
                         child: GroupListTile(
                           name: name,
                           favorited: favorited,
                           onFavoritedToggle: () => db.editGroup(
-                              doc.id, name, selectedFriendIDs, !favorited),
+                              doc['id'], name, selectedFriendIDs, !favorited),
                           onTap: () => showModalBottomSheet<void>(
                             context: context,
                             isScrollControlled: true,

@@ -43,9 +43,7 @@ class _CheckInsScreen extends State<CheckInsScreen> {
   }
 
   bool hasCheckIn(friend) {
-    return constants.getField(friend, constants.checkInInterval,
-            constants.checkinIntervalNames[0]) !=
-        constants.checkinIntervalNames[0];
+    return false;
   }
 
   List sortedFriendsByCheckins() {
@@ -54,12 +52,7 @@ class _CheckInsScreen extends State<CheckInsScreen> {
     sorted.removeWhere((element) => !hasCheckIn(element));
 
     sorted.sort((friend1, friend2) {
-      final friend1Value = getCheckinImportance(constants.getField(friend1,
-          constants.checkInInterval, constants.checkinIntervalNames[0]));
-      final friend2Value = getCheckinImportance(constants.getField(friend2,
-          constants.checkInInterval, constants.checkinIntervalNames[0]));
-
-      return (friend1Value.compareTo(friend2Value));
+      return 1;
     });
 
     return sorted;
@@ -103,7 +96,7 @@ class _CheckInsScreen extends State<CheckInsScreen> {
                         onTap: () => widget.showFriendModal(
                           context,
                           name,
-                          friend.id,
+                          friend['id'],
                           intimacy,
                           checkInInterval,
                           widget.groups,

@@ -22,18 +22,10 @@ class GroupsCard extends StatelessWidget {
     List sorted = groups;
 
     sorted.sort((group1, group2) {
-      if (getField(group2, constants.favorited, false)) {
-        return 1;
-      } else {
-        return -1;
-      }
+      return 1;
     });
 
     return sorted;
-  }
-
-  dynamic getField(doc, field, defualt) {
-    return doc.data().toString().contains(field) ? doc.get(field) : defualt;
   }
 
   Widget buildGroupsScreen(BuildContext context) {

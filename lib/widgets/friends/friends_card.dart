@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:friends/widgets/friends/friends_list_tile.dart';
 import 'friends_screen.dart';
@@ -32,42 +31,12 @@ class FriendsCard extends StatelessWidget {
   }
 
   Widget buildFriendsScreen(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
-    final Stream<QuerySnapshot> friendsSnapshots = FirebaseFirestore.instance
-        .collection(constants.friends)
-        .where(constants.userId, isEqualTo: user.uid)
-        .snapshots();
-    final Stream<QuerySnapshot> groupsSnapshots = FirebaseFirestore.instance
-        .collection(constants.groups)
-        .where(constants.userId, isEqualTo: user.uid)
-        .snapshots();
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: friendsSnapshots,
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot1) {
-        return StreamBuilder<QuerySnapshot>(
-          stream: groupsSnapshots,
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
-            if (snapshot1.hasError || snapshot2.hasError) {
-              return Text('Error: ${snapshot1.error}. ${snapshot2.error}');
-            }
-            if (snapshot1.connectionState == ConnectionState.waiting ||
-                snapshot2.connectionState == ConnectionState.waiting) {
-              return const Text('Data is loading');
-            }
-
-            var friendsDocs = snapshot1.requireData.docs;
-            var groupsDocs = snapshot2.requireData.docs;
-
-            return FriendsScreen(
-              friends: friendsDocs,
-              groups: groupsDocs,
-              showFriendModal: showFriendModal,
-            );
-          },
-        );
-      },
+    final friendsDocs = constants.friendsDocs;
+    final groupsDocs = constants.groupsDocs;
+    return FriendsScreen(
+      friends: friendsDocs,
+      groups: groupsDocs,
+      showFriendModal: showFriendModal,
     );
   }
 
@@ -96,15 +65,11 @@ class FriendsCard extends StatelessWidget {
             itemBuilder: (context, int index) {
               final friend = sortedFriends[index];
               final name = friend[constants.name];
-              final checkinInterval = constants.getField(
-                friend,
-                constants.checkInInterval,
-                constants.checkinIntervalNames[0],
-              );
+              final checkinInterval = friend[constants.checkInInterval];
 
               return FriendsListTile(
                 name: name,
-                id: friend.id,
+                id: friend['id'],
                 checkinInterval: checkinInterval,
                 groups: groups,
               );

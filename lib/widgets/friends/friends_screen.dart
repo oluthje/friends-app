@@ -75,6 +75,7 @@ class _FriendsScreen extends State<FriendsScreen> {
             constants.checkinIntervalNames[0],
             widget.groups,
           ),
+          backgroundColor: Theme.of(context).primaryColor,
           child: const Icon(Icons.add),
         ),
       ),

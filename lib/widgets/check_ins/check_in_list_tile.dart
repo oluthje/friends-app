@@ -20,14 +20,12 @@ class CheckInListTile extends StatelessWidget {
     final calc = CheckInCalculator();
     final name = friend[constants.name];
     final baseDate = friend[constants.checkInBaseDate];
-    List<Timestamp> dates = [];
-    for (Timestamp date in friend[constants.checkInDates]) {
-      dates.add(date);
-    }
+    List<dynamic> dates = [];
     final lastCheckIn = dates.isEmpty ? null : dates.last.toDate();
     final interval = friend[constants.checkInInterval];
-    final checkedIn = calc.isCheckedIn(baseDate, dates, interval);
-    final DateTime deadline = calc.deadline(baseDate, dates, interval);
+    final checkedIn = false; //calc.isCheckedIn(baseDate, dates, interval);
+    final DateTime deadline =
+        DateTime.now(); //calc.deadline(baseDate, [], interval);
 
     final String formattedTimeToDeadline =
         calc.formatTimeUntilDeadline(deadline);
@@ -48,9 +46,9 @@ class CheckInListTile extends StatelessWidget {
           TextButton(
             onPressed: () {
               if (checkedIn) {
-                db.removeCheckInDate(friend.id, dates.last);
+                db.removeCheckInDate(friend['id'], dates.last);
               } else {
-                db.addCheckInDate(friend.id, DateTime.now());
+                db.addCheckInDate(friend['id'], DateTime.now());
               }
             },
             style: TextButton.styleFrom(

@@ -61,7 +61,7 @@ class _FriendModal extends State<FriendModal> {
         // convert group indices to group ids
         List selectedGroupIds = [];
         for (int index in selectedGroupIndices) {
-          selectedGroupIds.add(widget.groups[index].id);
+          selectedGroupIds.add(widget.groups[index]['id']);
         }
 
         if (widget.id == '' || widget.id == null) {

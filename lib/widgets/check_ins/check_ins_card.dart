@@ -34,42 +34,17 @@ class CheckInsCard extends StatelessWidget {
         .toList();
 
     sorted.sort((friend1, friend2) {
-      final friend1Value = getCheckinImportance(constants.getField(friend1,
-          constants.checkInInterval, constants.checkinIntervalNames[0]));
-      final friend2Value = getCheckinImportance(constants.getField(friend2,
-          constants.checkInInterval, constants.checkinIntervalNames[0]));
-
-      return (friend1Value.compareTo(friend2Value));
+      return 1;
     });
 
     return sorted;
   }
 
   Widget buildCheckInsScreen(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
-    final Stream<QuerySnapshot> friendsSnapshots = FirebaseFirestore.instance
-        .collection(constants.friends)
-        .where(constants.userId, isEqualTo: user.uid)
-        .snapshots();
-
-    return StreamBuilder(
-      stream: friendsSnapshots,
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Waiting on data');
-        }
-
-        var friendsDocs = snapshot.requireData.docs;
-
-        return CheckInsScreen(
-          friends: friendsDocs,
-          showFriendModal: showFriendModal,
-          groups: groups,
-        );
-      },
+    return CheckInsScreen(
+      friends: friends,
+      showFriendModal: showFriendModal,
+      groups: groups,
     );
   }
 

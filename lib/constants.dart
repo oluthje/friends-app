@@ -46,6 +46,49 @@ Map checkinIntervalDays = {
   checkinIntervalNames[5]: 365,
 };
 
-dynamic getField(doc, String field, defualt) {
-  return doc.data().toString().contains(field) ? doc.get(field) : defualt;
-}
+final friendsDocs = [
+  {
+    "check_in_base_date": DateTime.now(),
+    "check_in_dates": [],
+    "check_in_interval": "Weekly",
+    "friend_intimacy": 3,
+    "name": "Ted",
+    "user_id": 1,
+    "id": "1",
+  },
+  {
+    "check_in_base_date": DateTime.now(),
+    "check_in_dates": [],
+    "check_in_interval": "Daily",
+    "friend_intimacy": 3,
+    "name": "Ted",
+    "user_id": 1,
+    "id": "2",
+  },
+  {
+    "check_in_base_date": DateTime.now(),
+    "check_in_dates": [],
+    "check_in_interval": "Monthly",
+    "friend_intimacy": 3,
+    "name": "Ted",
+    "user_id": 1,
+    "id": "3",
+  },
+];
+final groupsDocs = [
+  {
+    "favorited": false,
+    "friend_ids": ["1", "2"],
+    "name": "UCSC",
+  },
+  {
+    "favorited": true,
+    "friend_ids": ["2", "3"],
+    "name": "Climbing",
+  },
+  {
+    "favorited": false,
+    "friend_ids": ["1"],
+    "name": "Yoga",
+  },
+];

@@ -6,6 +6,7 @@ class GroupsManager extends DataManager {
   final collectionPath = 'groups';
 
   void addGroup(String name, List friendIDs) {
+    return;
     db.collection(collectionPath).add({
       constants.name: name,
       constants.friendIds: friendIDs,
@@ -15,6 +16,7 @@ class GroupsManager extends DataManager {
   }
 
   void editGroup(String id, String name, List selectedFriends, bool favorited) {
+    return;
     final doc = db.collection(collectionPath).doc(id);
     doc.update({
       constants.name: name,
@@ -25,6 +27,7 @@ class GroupsManager extends DataManager {
 
   // add friend if possible
   void addFriendToGroup(String groupId, String friendId) {
+    return;
     final doc = db.collection(collectionPath).doc(groupId);
     doc.update({
       constants.friendIds: FieldValue.arrayUnion([friendId]),
@@ -33,6 +36,7 @@ class GroupsManager extends DataManager {
 
   // remove friend if possible
   void removeFriendFromGroup(String groupId, String friendId) {
+    return;
     final doc = db.collection(collectionPath).doc(groupId);
     doc.update({
       constants.friendIds: FieldValue.arrayRemove([friendId]),
@@ -40,6 +44,7 @@ class GroupsManager extends DataManager {
   }
 
   void deleteGroup(String id) {
+    return;
     final doc = db.collection(collectionPath).doc(id);
     doc.delete().then((value) => null);
   }

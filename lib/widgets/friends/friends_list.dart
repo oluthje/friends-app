@@ -24,8 +24,7 @@ class FriendsList extends StatelessWidget {
       child: GroupedListView<dynamic, String>(
         elements: friends,
         groupBy: (element) {
-          int intimacy = constants.getField(element, constants.friendIntimacy,
-              constants.Intimacies.newFriend.index);
+          int intimacy = element[constants.friendIntimacy];
           return constants.Intimacies.values[intimacy].index.toString();
         },
         groupSeparatorBuilder: (String groupValue) {
@@ -43,28 +42,26 @@ class FriendsList extends StatelessWidget {
           );
         },
         itemBuilder: (context, dynamic element) {
-          final DocumentSnapshot friend = element;
+          final friend = element;
           final name = friend[constants.name];
-          final intimacy = constants.getField(friend, constants.friendIntimacy,
-              constants.Intimacies.newFriend.index);
-          final checkinInterval = constants.getField(friend,
-              constants.checkInInterval, constants.checkinIntervalNames[0]);
+          final intimacy = friend[constants.friendIntimacy];
+          final checkinInterval = friend[constants.checkInInterval];
 
           return Dismissible(
             key: UniqueKey(),
             direction: DismissDirection.endToStart,
             onDismissed: (direction) {
-              FriendsManager().deleteFriend(friend.id);
+              FriendsManager().deleteFriend(friend['id']);
             },
             child: Card(
               child: FriendsListTile(
                 name: name,
-                id: friend.id,
+                id: friend['id'],
                 checkinInterval: checkinInterval,
                 onTap: () => showFriendModal(
                   context,
                   name,
-                  friend.id,
+                  friend['id'],
                   intimacy,
                   checkinInterval,
                   groups,

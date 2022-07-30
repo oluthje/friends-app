@@ -8,6 +8,7 @@ class FriendsManager extends DataManager {
 
   void addFriend(String name, int intimacy, String interval,
       List selectedGroupIds, List groups) {
+    return;
     db.collection(collectionPath).add({
       constants.name: name,
       constants.userId: user.uid,
@@ -20,6 +21,7 @@ class FriendsManager extends DataManager {
 
   void editFriend(String id, String name, int intimacy, String interval,
       List selectedGroupIds, List groups) {
+    return;
     final doc = db.collection(collectionPath).doc(id);
 
     doc.update({
@@ -32,11 +34,13 @@ class FriendsManager extends DataManager {
   }
 
   void deleteFriend(String id) {
+    return;
     final doc = db.collection(collectionPath).doc(id);
     doc.delete().then((value) => null);
   }
 
   void _updateFriendsGroups(String id, List selectedGroupIds, List groups) {
+    return;
     final groupsDb = GroupsManager();
     for (dynamic group in groups) {
       String groupId = group.id;
