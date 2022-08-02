@@ -4,13 +4,11 @@ import 'package:friends/constants.dart' as constants;
 class IntimacySelection extends StatefulWidget {
   final int intimacy;
   final Function onChange;
-  final Color color;
 
   const IntimacySelection({
     Key? key,
     required this.intimacy,
     required this.onChange,
-    required this.color,
   }) : super(key: key);
 
   @override

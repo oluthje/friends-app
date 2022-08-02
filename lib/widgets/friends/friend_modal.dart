@@ -86,7 +86,6 @@ class _FriendModal extends State<FriendModal> {
             ),
             IntimacySelection(
               intimacy: intimacy,
-              color: Colors.blue,
               onChange: (newIntimacy) {
                 intimacy = newIntimacy;
               },

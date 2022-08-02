@@ -12,6 +12,7 @@ import 'package:friends/widgets/dashboard/profile_button.dart';
 import 'package:friends/widgets/friends/friends_card.dart';
 import 'package:friends/widgets/groups/groups_card.dart';
 import 'package:friends/widgets/check_ins/check_ins_card.dart';
+import 'package:friends/widgets/contacts/contacts_import_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -147,6 +148,17 @@ class _FriendsApp extends State<FriendsApp> {
                         friends: friendsDocs,
                         groups: groupsDocs,
                         showFriendModal: showFriendModal,
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return const ContactsImportScreen();
+                            },
+                          ),
+                        ),
+                        child: const Text('View Contacts'),
                       ),
                       GroupsCard(
                         friends: friendsDocs,
