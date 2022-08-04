@@ -1,16 +1,24 @@
-# friends
+# Friends App
 
-A new Flutter project.
+## Installation
+Install flutter [here](https://docs.flutter.dev/get-started/install?gclid=CjwKCAjw3K2XBhAzEiwAmmgrAusug12AG4Xll9O3hTzi7biZ2VdMf5PUqDcFDVw1pMHTtGGTf3dvPBoCOEYQAvD_BwE&gclsrc=aw.ds)
 
-## Getting Started
+Install project dependencies
+```bash
+flutter pub get
+```
 
-This project is a starting point for a Flutter application.
+Connect to Firebase database
 
-A few resources to get you started if this is your first Flutter project:
+## Usage
+Run the app
+```bash
+flutter pub get
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Preview
+| Command | Description |
+| --- | --- |
+|<img src="https://user-images.githubusercontent.com/16377965/182944179-75aefde6-db60-4fd4-8083-276c514bbf99.JPEG" width="500">|<img src="https://user-images.githubusercontent.com/16377965/182944187-d404a687-7d5c-4d2f-8a40-bc4eb882fec8.JPEG" width="500">|
+|<img src="https://user-images.githubusercontent.com/16377965/182944191-f159436e-a4ee-43cd-a8de-ede9c31b5d84.JPEG" width="500">|<img src="https://user-images.githubusercontent.com/16377965/182944194-516daafa-ab68-4dcf-b141-8fa73fc16fe4.JPEG" width="500">|
+|<img src="https://user-images.githubusercontent.com/16377965/182944198-5e255d39-93c9-426d-a00c-c882ab054a14.JPEG" width="500">| |
